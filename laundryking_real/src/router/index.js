@@ -1,23 +1,129 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import MainPage from '@/components/MainPage.vue'
+import NotFound from '@/components/NotFound.vue'
+import ChargePage from '@/components/ChargePage.vue'
+import EventDtailPage from '@/components/EventDtailPage.vue'
+import EventPage from '@/components/EventPage.vue'
+import HoneyPage from '@/components/HoneyPage.vue'
+import HowusePage from '@/components/HowusePage.vue'
+import InfoPage from '@/components/InfoPage.vue'
+import JoinPage from '@/components/JoinPage.vue'
+import LoginPage from '@/components/LoginPage.vue'
+import OrderHistoryPage from '@/components/OrderHistoryPage.vue'
+import OrderInfo from '@/components/OrderInfo.vue'
+import OrderSuccessPage from '@/components/OrderSuccessPage.vue'
+import PaymentPage from '@/components/PaymentPage.vue'
+import PickupApplyPage from '@/components/PickupApplyPage.vue'
+import PickupPage from '@/components/PickupPage.vue'
+import QnaPage from '@/components/QnaPage.vue'
+import UserHistoryPage from '@/components/UserHistoryPage.vue'
+
+
+
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'main',
+    component: MainPage,
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-    }
+    path: '/main',
+    name: 'home',
+    component: MainPage,
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'notfound',
+    component: NotFound,
+  },
+  {
+    path: '/charge',
+    name: 'charge',
+    component: ChargePage,
+  },
+  {
+    path: '/eventdetail',
+    name: 'eventdetail',
+    component: EventDtailPage,
+  },
+  {
+    path: '/event',
+    name: 'event',
+    component: EventPage,
+  },
+  {
+    path: '/tip',
+    name: 'tip',
+    component: HoneyPage,
+  },
+  {
+    path: '/howuse',
+    name: 'howuse',
+    component: HowusePage,
+  },
+  {
+    path: '/info',
+    name: 'info',
+    component: InfoPage,
+  },
+  {
+    path: '/join',
+    name: 'join',
+    component: JoinPage,
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginPage,
+  },
+  {
+    path: '/orderhistory',
+    name: 'orderhistory',
+    component: OrderHistoryPage,
+  },
+  {
+    path: '/orderinfo',
+    name: 'orderinfo',
+    component: OrderInfo,
+  },
+  {
+    path: '/ordersuccess',
+    name: 'ordersuccess',
+    component: OrderSuccessPage,
+  },
+  {
+    path: '/payment',
+    name: 'payment',
+    component: PaymentPage,
+  },
+  {
+    path: '/pickupapply',
+    name: 'pickupapply',
+    component: PickupApplyPage
+  },
+  {
+    path: '/pickup',
+    name: 'pickup',
+    component: PickupPage,
+  },
+  {
+    path: '/qna',
+    name: 'qna',
+    component: QnaPage,
+  },
+  {
+    path: '/userhistory',
+    name: 'userhistory',
+    component: UserHistoryPage,
   }
 ]
+
+
+
+
+
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
