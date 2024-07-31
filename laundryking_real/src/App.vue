@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app dark color="blue">
-    <v-toolbar-title class="d-flex justify-center"><img class="logo" src="/images/images/logo-light.png" alt="세탁왕" width="100"/></v-toolbar-title>
+    <v-toolbar-title class="d-flex justify-center"><h1><img class="logo" src="/images/images/logo-light.png" alt="세탁왕" width="100"/></h1></v-toolbar-title>
     <v-app-bar-nav-icon></v-app-bar-nav-icon>
 </v-app-bar>
 
@@ -30,8 +30,10 @@
 
 <style>
 .logo{
+  margin-left: 24px;
   display:block;
   align-items: center;
+
 }
 
 </style>
