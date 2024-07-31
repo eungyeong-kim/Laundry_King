@@ -1,15 +1,40 @@
 <template>
     <div>
-    <h3>*픽업 지역 페이지 입니다.</h3>
+        <v-main style="padding:0;">
+            <v-row style="padding:0;">
+                <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
+
+                <v-col class="d-flex justify-center align-center mt-2"><h2>픽업 지역</h2></v-col>
+                <v-col></v-col>
+            </v-row>
+
+            <v-content>
+            </v-content>
+        </v-main>
     </div>
 </template>
 
 <script>
     export default{
+        methods:{
+            goBack(){
+            this.$router.go(-1);
+        }}
 
     }
 </script>
 
-<style>
-
+<style scoped>
+.material-symbols-outlined {
+    font-size: 80px;
+    color: #A1A8BD;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 100,
+  'GRAD' 0,
+  'opsz' 24
+}
+template, div, footer{
+    padding:0
+}
 </style>

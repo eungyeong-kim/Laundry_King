@@ -5,6 +5,8 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
 
+import './assets/reset.css'
+
 loadFonts()
 
 createApp(App)
