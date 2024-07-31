@@ -27,11 +27,11 @@ const routes = [
     name: 'main',
     component: MainPage,
   },
-  /*{
+  {
     path: '/main',
     name: 'home',
     component: MainPage,
-  }*/,
+  },
   {
     path: '/:pathMatch(.*)*',
     name: 'notfound',
