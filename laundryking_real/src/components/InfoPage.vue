@@ -124,7 +124,6 @@ template, div, footer{
     background-color: #e0f2ff;
 }
 .title_wrap p:first-child{
-    font-weight: bold;
     width:  180px;
     overflow: hidden;
     white-space: nowrap;
@@ -148,7 +147,6 @@ template, div, footer{
     gap: 200px
 }
     .title_wrap p:first-child{
-    font-weight: bold;
     width:  180px;
     white-space: nowrap;
     overflow:inherit;
@@ -162,7 +160,6 @@ template, div, footer{
     gap: 200px
 }
     .title_wrap p:first-child{
-    font-weight: bold;
     width:  180px;
     overflow:inherit;
     text-overflow: inherit;
