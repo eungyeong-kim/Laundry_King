@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     goBack() {
-      console.log('돌아가기 버튼 클릭됨');
+      this.$router.push('/main');
     },
     navigateToDetail(id) {
       if (id === 1) {
@@ -182,9 +182,9 @@ export default {
 .title {
   font-size: 13px;
   font-weight: bold;
-  overflow: hidden;    /* 텍스트가 컨테이너를 넘지 않도록 설정 */
-  text-overflow: ellipsis; /* 텍스트가 넘칠 경우 생략 부호 추가 */
-  line-height: 1.4; /* 줄 높이 조정 */
+  overflow: hidden;   
+  text-overflow: ellipsis; 
+  line-height: 1.4; 
 }
 
 .description {

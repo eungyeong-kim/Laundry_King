@@ -1,20 +1,20 @@
 <template>
   <v-app>
     <v-main>
-      <v-container class="centered-container">
+      
         <!-- 헤더 부분 -->
-        <v-row class="header-row">
-          <v-col class="header-col">
-            <button @click="goBack">
-              <span class="material-symbols-outlined">chevron_backward</span>
-            </button>
-          </v-col>
-          <v-col class="header-col">
-            <h2>주문정보</h2>
-          </v-col>
-          <v-col></v-col>
-        </v-row>
+        <v-row style="padding:0;">
+      <v-col cols="1">
+        <button @click="goBack">
+          <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
+        </button>
+      </v-col>
+      <v-col cols="10" class="d-flex justify-center align-center">
+        <h2>주문정보</h2>
+      </v-col>
+    </v-row>
 
+    <v-container class="centered-container">
         <!-- 폼 부분 -->
         <v-row class="form-row">
           <v-col cols="12" md="6">
@@ -85,26 +85,24 @@
               </div>
             </div>
 
-
             <!-- 상자 부분 -->
-<div class="notice-box-wrapper">
-  <div class="notice-box">
-    <div class="notice-box-header">
-      <img src="/images/images/info.png" alt="Info Icon" class="notice-box-icon" />
-      <span class="notice-box-text">유의사항</span>
-    </div>
-    <div class="notice-box-detail">
-      <p class="notice-box-detail-text">
-        • 1회 최소 주문금액은 30,000원이에요. (픽업 택배비는 별도 결제)<br>
-        • 최소 주문금액 미달 시 기준가인 30,000원에서 쿠폰 등 할인이 적용돼요.
-      </p>
-    </div>
-  </div>
-</div>
-
+            <div class="notice-box-wrapper">
+              <div class="notice-box">
+                <div class="notice-box-header">
+                  <img src="/images/images/info.png" alt="Info Icon" class="notice-box-icon" />
+                  <span class="notice-box-text">유의사항</span>
+                </div>
+                <div class="notice-box-detail">
+                  <p class="notice-box-detail-text">
+                    • 1회 최소 주문금액은 30,000원이에요. (픽업 택배비는 별도 결제)<br>
+                    • 최소 주문금액 미달 시 기준가인 30,000원에서 쿠폰 등 할인이 적용돼요.
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <!-- 다음 버튼 -->
-            <v-btn @click="submit" class="submit-button mt-4">
+            <v-btn @click="submit" class="submit-button mt-4" :class="{ disabled: !isPickupDateSelected }" :disabled="!isPickupDateSelected">
               다음
             </v-btn>
           </v-col>
@@ -125,6 +123,7 @@ export default {
       cleaningRequest: '',
       valid: false,
       isChecked: false,  // 체크 상태를 저장하는 변수
+      isPickupDateSelected: false, // 수거 예정일 선택 여부
       daysOfWeek: ["일", "월", "화", "수", "목", "금", "토"],
     };
   },
@@ -138,10 +137,10 @@ export default {
   },
   methods: {
     goBack() {
-      console.log('돌아가기 버튼 클릭됨');
+      this.$router.push('/pickupapply');
     },
     submit() {
-      if (this.$refs.form.validate()) {
+      if (this.$refs.form.validate() && this.isPickupDateSelected) {
         console.log('Form submitted:', {
           pickupDate: this.pickupDate,
           deliveryDate: this.deliveryDate,
@@ -153,6 +152,7 @@ export default {
     },
     updatePickupDate() {
       this.$refs.form.validate(); // 날짜 변경 시 폼 검증
+      this.isPickupDateSelected = !!this.pickupDate; // 수거 예정일이 선택되었는지 확인
       if (this.pickupDate) {
         this.deliveryDate = this.calculateDeliveryDate(this.pickupDate);
       }
@@ -185,6 +185,17 @@ export default {
 </script>
 
 <style scoped>
+.material-symbols-outlined {
+  font-size: 80px;
+  color: #A1A8BD;
+  font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 24;
+}
+
+.v-icon {
+  color: #202020;
+}
+
+
 .centered-container {
   display: flex;
   flex-direction: column;
@@ -224,7 +235,7 @@ export default {
 .textarea-input {
   width: 100%;
   border: none; /* 전체 테두리 제거 */
-  border-bottom: 1px solid #E0E0E0; /* 하단 선 추가 */
+  border-bottom: 1px solid #E0E0E0; /* 하단 선 */
   background-color: transparent; /* 배경색 제거 */
   padding: 8px;
   box-sizing: border-box;
@@ -232,8 +243,8 @@ export default {
 
 .date-input:focus,
 .textarea-input:focus {
-  outline: none; /* 포커스 시 기본 아웃라인 제거 */
-  border-bottom: 1px solid #2196F3; /* 포커스 시 하단 선 색상 변경 */
+  outline: none; 
+  border-bottom: 1px solid #2196F3; 
 }
 
 .date-display {
@@ -249,12 +260,12 @@ export default {
 
 /* 프리미엄 케어 */
 .info-box-wrapper {
-  margin-bottom: 16px; /* 다음 버튼과 상자 사이의 간격 */
+  margin-bottom: 16px; 
 }
 .info-box {
   display: flex;
-  flex-direction: column; /* 세로 방향으로 배치 */
-  align-items: center; /* 가로 중앙 정렬 */
+  flex-direction: column; 
+  align-items: center; 
   padding: 15px;
   border: 1px solid #64B5F6;
   border-radius: 10px;
@@ -262,13 +273,13 @@ export default {
 
 .info-box-header {
   display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
+  align-items: center; 
 }
 
 .info-box-icon {
   font-size: 24px;
   color: #64B5F6;
-  margin-right: 10px; /* 아이콘과 텍스트 간격 */
+  margin-right: 10px; 
 }
 
 .info-box-text {
@@ -282,8 +293,8 @@ export default {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #ffffff; /* 기본 배경색 */
-  border: 2px solid #64B5F6; /* 기본 테두리 색상 */
+  background: #ffffff; 
+  border: 2px solid #64B5F6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -292,14 +303,14 @@ export default {
 }
 
 .info-box-button.checked {
-  background: #2196F3; /* 체크된 상태에서 파란색으로 채워지기 */
-  border-color: #2196F3; /* 테두리 색상도 파란색으로 변경 */
+  background: #2196F3; 
+  border-color: #2196F3; 
 }
 
 .info-box-button .material-symbols-outlined {
   font-size: 18px;
-  color: #ffffff; /* 아이콘 색상 */
-  display: none; /* 아이콘 숨기기 */
+  color: #ffffff; 
+  display: none; 
 }
 
 .info-box-detail {
@@ -310,7 +321,7 @@ export default {
 .info-box-line {
   border: 0;
   border-top: 1px solid #E0E0E0;
-  margin: 10px 0; /* 선과 텍스트 간격 */
+  margin: 10px 0; 
 }
 
 .info-box-detail-text {
@@ -319,46 +330,44 @@ export default {
   text-align: left;
 }
 
-
 /* 유의사항 */
 .notice-box-wrapper {
-  margin-bottom: 16px; /* 폼과 상자 사이의 간격 */
+  margin-bottom: 16px; 
 }
 .notice-box {
   display: flex;
-  flex-direction: column; /* 세로 방향으로 배치 */
-  align-items: center; /* 가로 중앙 정렬 */
+  flex-direction: column; 
+  align-items: center; 
   padding: 15px;
   border-radius: 10px;
   background: #F4FAFE;
-  position: relative; /* 자식 요소의 절대 위치 지정을 위한 부모의 상대 위치 지정 */
+  position: relative; 
 }
 
 .notice-box-header {
   display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 수평 중앙 정렬 */
-  width: 100%; /* 전체 너비를 사용 */
+  align-items: center; 
+  justify-content: center; 
+  width: 100%; 
   position: relative;
 }
 
 .notice-box-icon {
-  position: absolute; /* 상자 왼쪽 상단에 위치 */
+  position: absolute; 
   left: -5px;
   top: 50%;
   transform: translateY(-50%);
-  width: 30px; /* 아이콘 크기 조정 */
-  height: 30px; /* 아이콘 크기 조정 */
+  width: 30px; 
+  height: 30px; 
 }
 
 .notice-box-text {
   font-size: 16px;
   color: #000000;
-  font-weight: bold; /* 텍스트 두껍게 */
-  text-align: center; /* 텍스트 가운데 정렬 */
+  font-weight: bold; 
+  text-align: center; 
   flex: 1; /* 텍스트가 중앙에 위치하도록 하기 */
 }
-
 
 .notice-box-detail {
   margin-top: 10px;
@@ -367,9 +376,8 @@ export default {
 .notice-box-detail-text {
   font-size: 13px;
   color: #798094;
-  line-height: 1.5; /* 줄 간격 조정 */
+  line-height: 1.5; 
 }
-
 
 .submit-button {
   width: 100%;
@@ -377,6 +385,17 @@ export default {
   color: #ffffff;
   border-radius: 10px;
   box-shadow: none;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
+.submit-button.disabled {
+  background: #E0E0E0;
+  color: #9E9E9E;
+  cursor: not-allowed;
+}
+
+.submit-button[disabled] {
+  background: #E0E0E0;
+  color: #9E9E9E;
+}
 </style>
