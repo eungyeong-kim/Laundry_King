@@ -147,7 +147,7 @@ const togglePasswordVisibility = () => {
 
 </script>
 
-<style>
+<style scoped>
 h2 {
     margin: 30px 0;
     text-align: center;
