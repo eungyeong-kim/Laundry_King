@@ -77,8 +77,8 @@
 export default {
   methods: {
     goBack() {
-      console.log('돌아가기 버튼 클릭됨');
-    }
+      this.$router.push('/event');
+    },
   }
 }
 </script>
@@ -104,8 +104,8 @@ export default {
 
 /* event detail */
 .logo-image {
-  width: 80px; /* 원하는 최대 너비로 조정 */
-  height: 80px; /* 원하는 최대 높이로 조정 */
+  width: 80px; 
+  height: 80px; 
 }
 
 .eventdetail-text {
@@ -116,25 +116,25 @@ export default {
 }
 
 .event-image1 {
-  width: 300px; /* 너비 조정 */
-  height: auto; /* 비율에 맞춰 자동 조정 */
-  margin: 0 auto; /* 가운데 정렬 */
+  width: 300px; 
+  height: auto; 
+  margin: 0 auto; 
   border-radius: 20px;
   margin-bottom: 50px;
 }
 
 .event-image2 {
-  width: 500px; /* 너비 조정 */
-  height: auto; /* 비율에 맞춰 자동 조정 */
-  margin: 0 auto; /* 가운데 정렬 */
+  width: 500px; 
+  height: auto; 
+  margin: 0 auto; 
   border-radius: 20px;
 }
 
 /* 새로운 상자 스타일 */
 .new-box {
   display: flex;
-  border-radius: 20px; /* 테두리 둥글게 */
-  background-color: #F4FAFE; /* 배경 색상 */
+  border-radius: 20px; 
+  background-color: #F4FAFE; 
   padding: 20px;
   max-width: 500px;
   height: 180px;
@@ -143,18 +143,18 @@ export default {
 }
 
 .new-box-image {
-  width: 40%; /* 사진이 상자의 40%를 차지하도록 설정 */
-  height: auto; /* 비율에 맞춰 자동 조정 */
+  width: 40%; 
+  height: auto; 
 }
 
 .new-box-image-top {
-    width: 35%; /* 사진이 상자의 35%를 차지하도록 설정 */
+    width: 35%; 
     margin-top: -20px;
     margin-bottom: 10px;
 }
 
 .new-box-text {
-  width: 60%; /* 텍스트가 상자의 60%를 차지하도록 설정 */
+  width: 60%; 
   padding: 20px;
 }
 
@@ -170,11 +170,11 @@ export default {
 }
 
 .event-date {
-  background-color: #F0F2F9; /* 상자 배경색 */
-  padding: 20px; /* 상자 안쪽 여백 */
-  border-radius: 20px; /* 상자 모서리 둥글게 */
-  margin-bottom: 20px; /* 상자와 상단 요소 사이 여백 */
-  text-align: left; /* 내용 중앙 정렬 */
+  background-color: #F0F2F9; 
+  padding: 20px; 
+  border-radius: 20px;
+  margin-bottom: 20px; 
+  text-align: left; 
   line-height: 1.5;
   font-weight: bold;
   max-width: 500px;
@@ -187,15 +187,15 @@ export default {
 
 /* 버튼 스타일 */
 .blue-button {
-  background-color: #2196F3; /* 파란색 배경 */
-  font-weight: bold; /* 글씨 두껍게 */
-  border-radius: 10px; /* 둥근 모서리 */
+  background-color: #2196F3; 
+  font-weight: bold; 
+  border-radius: 10px; 
   color: #ffffff;
   width: 500px;
   box-shadow: none;
 }
 
 .blue-button:hover {
-  background-color: #2979FF; /* 호버 시 색상 변화 */
+  background-color: #2979FF; 
 }
 </style>

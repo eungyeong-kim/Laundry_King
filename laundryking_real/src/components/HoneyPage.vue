@@ -2,16 +2,9 @@
   <v-app>
     <v-main>
       <v-row style="padding:0;">
-        <v-col>
-          <button @click="goBack">
-            <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
-          </button>
-        </v-col>
-        <v-col class="d-flex justify-center align-center mt-2">
-          <h2>세탁꿀팁</h2>
-        </v-col>
-        <v-col></v-col>
-      </v-row>
+        <v-col cols="1"><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
+        <v-col cols="10" class="d-flex justify-center align-center"><h2>세탁꿀팁</h2></v-col>
+        </v-row>
 
       <v-container class="d-flex flex-column align-center">
         <!-- 탭 컨테이너, 가로 스크롤 가능 -->
@@ -251,8 +244,8 @@ export default {
   },
   methods: {
     goBack() {
-      console.log('돌아가기 버튼 클릭됨');
-    }
+      this.$router.push('/main');
+    },
   }
 }
 </script>
@@ -278,13 +271,13 @@ export default {
 
 .honey-list {
   width: 100%;
-  text-align: center; /* 내용 중앙 정렬 */
+  text-align: center; 
 }
 
 .honey-image {
-  width: 100%; /* 부모 요소에 맞춰 너비를 조정 */
-  max-width: 1000px; /* 최대 너비 설정 */
-  height: auto; /* 비율에 맞춰 자동으로 조정 */
+  width: 100%;
+  max-width: 1000px; 
+  height: auto; 
   border-radius: 20px;
 }
 
@@ -293,24 +286,24 @@ export default {
   width: 100%;
   overflow-x: auto;
   display: flex;
-  justify-content: center; /* 탭 컨테이너를 가운데 정렬합니다. */
-  padding: 0 10px; /* 필요에 따라 패딩을 추가할 수 있습니다. */
+  justify-content: center; 
+  padding: 0 10px; 
   margin-bottom: 50px;
 }
 
 .tabs {
   display: flex;
-  flex-wrap: nowrap; /* 탭이 줄 바꿈되지 않도록 합니다. */
-  white-space: nowrap; /* 탭이 줄 바꿈되지 않도록 합니다. */
+  flex-wrap: nowrap; 
+  white-space: nowrap; 
 }
 
 .tabs .v-tab {
-  min-width: 120px; /* 디자인에 맞게 조정합니다. */
-  flex: 0 0 auto; /* 탭이 줄어들지 않도록 합니다. */
+  min-width: 120px; 
+  flex: 0 0 auto; 
 }
 
 .tabs::-webkit-scrollbar {
-  display: none; /* 웹킷 브라우저에서 스크롤바를 숨깁니다. */
+  display: none; 
 }
 
 .honeyh2 {
@@ -319,7 +312,7 @@ export default {
 }
 
 .large-text {
-  font-size: 1.2em; /* 큰 글씨 크기 */
+  font-size: 1.2em; 
   font-weight: bold;
   margin-bottom: 5px;
   text-align: left;
@@ -332,24 +325,24 @@ export default {
 
 
 .honeybox {
-  background-color: #F0F2F9; /* 상자 배경색 */
-  padding: 20px; /* 상자 안쪽 여백 */
-  border-radius: 20px; /* 상자 모서리 둥글게 */
-  margin-bottom: 20px; /* 상자와 상단 요소 사이 여백 */
-  text-align: center; /* 내용 중앙 정렬 */
+  background-color: #F0F2F9; 
+  padding: 20px; 
+  border-radius: 20px; 
+  margin-bottom: 20px; 
+  text-align: center; 
   line-height: 1.1;
 }
 
 .honeybox-text {
   font-size: 15px;
-  color: #333; /* 글자 색상 */
+  color: #333; 
 }
 
 
 .highlight {
-  background-color: #E2E9FF; /* 형광펜 색상 (노란색) */
-  padding: 0 5px; /* 하이라이트와 글자 사이의 여백 */
-  border-radius: 2px; /* 약간의 둥근 모서리 */
+  background-color: #E2E9FF; 
+  padding: 0 5px; 
+  border-radius: 2px; 
 }
 
 .arrow {

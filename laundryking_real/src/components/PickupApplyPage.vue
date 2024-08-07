@@ -1,20 +1,11 @@
 <template>
   <v-app>
     <v-main>
-      <v-container class="centered-container">
-        <!-- 헤더 부분 -->
-        <v-row class="header-row">
-          <v-col class="header-col">
-            <button @click="goBack">
-              <span class="material-symbols-outlined">chevron_backward</span>
-            </button>
-          </v-col>
-          <v-col class="header-col">
-            <h2>택배픽업 신청</h2>
-          </v-col>
-          <v-col></v-col>
+      <v-row style="padding:0;">
+        <v-col cols="1"><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
+        <v-col cols="10" class="d-flex justify-center align-center"><h2>택배픽업신청</h2></v-col>
         </v-row>
-
+      <v-container class="centered-container">
         <!-- 폼 부분 -->
         <v-row class="form-row">
           <v-col cols="12" md="6">
@@ -109,7 +100,7 @@ export default {
   },
   methods: {
     goBack() {
-      console.log('돌아가기 버튼 클릭됨');
+      this.$router.push('/main');
     },
     submit() {
       if (this.$refs.form.validate()) {
@@ -162,24 +153,22 @@ export default {
 </script>
 
 <style scoped>
+
+.material-symbols-outlined {
+  font-size: 80px;
+  color: #A1A8BD;
+  font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 24;
+}
+
+.v-icon {
+  color: #202020;
+}
 .centered-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.header-row {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 0;
-}
-
-.header-col {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .form-row {
   width: 100%;
@@ -201,7 +190,7 @@ export default {
   width: 100%;
   border: none;
   border-bottom: 1px solid #E0E0E0; /* 하단 선 추가 */
-  background-color: transparent; /* 배경색 제거 */
+  background-color: transparent; 
   padding: 8px 4px;
   box-sizing: border-box;
 }
@@ -223,16 +212,16 @@ export default {
 .address-button {
   position: absolute;
   right: 0;
-  top: 10px; /* 인풋 필드 상단에 버튼 위치 */
+  top: 10px; 
   padding: 0;
   min-width: 50px;
-  height: 32px; /* 버튼 높이 조정 */
+  height: 32px; 
   box-shadow: none;
   color: #A1A8BD;
 }
 
 .address-input-wrapper .custom-input {
-  padding-right: 50px; /* 버튼을 위한 공간 확보 */
+  padding-right: 50px; 
 }
 
 .phone-button,
@@ -242,7 +231,7 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   padding: 0;
-  height: 32px; /* 버튼 높이 조정 */
+  height: 32px; 
   display: flex;
   border: 1px solid #A1A8BD;
   box-shadow: none;
@@ -255,6 +244,5 @@ export default {
   color: #ffffff;
   border-radius: 10px;
   box-shadow: none;
-
 }
 </style>
