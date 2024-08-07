@@ -1,17 +1,22 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// src/firebaseConfig.js
 
-// Your web app's Firebase configuration
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+
+// Firebase 초기화
 const firebaseConfig = {
   apiKey: "AIzaSyDAwiETDagsxiMnT4O7IAa7hMpoj6mXjd4",
   authDomain: "laundryking-5a8d5.firebaseapp.com",
   projectId: "laundryking-5a8d5",
   storageBucket: "laundryking-5a8d5.appspot.com",
   messagingSenderId: "619955335513",
-  appId: "1:619955335513:web:0ec6d06f09212f33301c48"
+  appId: "1:619955335513:web:240020c0b15b4ef0301c48"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Firebase 앱 초기화
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+// Firebase 인증 가져오기
+export const firebaseAuth = firebase.auth();
