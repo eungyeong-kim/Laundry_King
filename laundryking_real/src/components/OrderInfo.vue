@@ -42,7 +42,7 @@
                   readonly
                   class="date-input"
                 />
-                <p class="date-display">선택한 날짜: {{ formattedDeliveryDate }}</p>
+                <p class="date-display">발송예정 날짜: {{ formattedDeliveryDate }}</p>
               </div>
 
               <!-- 세탁 요청사항 -->
@@ -102,7 +102,7 @@
             </div>
 
             <!-- 다음 버튼 -->
-            <v-btn @click="submit" class="submit-button mt-4" :class="{ disabled: !isPickupDateSelected }" :disabled="!isPickupDateSelected">
+            <v-btn @click="submit" class="submit-button mt-4" >
               다음
             </v-btn>
           </v-col>
@@ -250,7 +250,12 @@ export default {
 .date-display {
   margin-top: 8px;
   font-size: 14px;
-  color: #333;
+  color: #2196F3;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator { /* 달력 아이콘 */
+  filter: invert(42%) sepia(83%) saturate(2447%) hue-rotate(183deg) brightness(95%) contrast(101%);
+  cursor: pointer;
 }
 
 .blue-text {
@@ -388,14 +393,4 @@ export default {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-.submit-button.disabled {
-  background: #E0E0E0;
-  color: #9E9E9E;
-  cursor: not-allowed;
-}
-
-.submit-button[disabled] {
-  background: #E0E0E0;
-  color: #9E9E9E;
-}
 </style>

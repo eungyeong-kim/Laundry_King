@@ -1,14 +1,15 @@
 <template>
   <v-app>
     <v-main>
-      <v-row style="padding:0;">
-        <v-col cols="1">
-         
-        </v-col>
-        <v-col cols="10" class="d-flex justify-center align-center">
-          <h2>주문완료</h2>
-        </v-col>
-      </v-row>
+      <v-row style="padding:0;" class="mt-4">
+      <v-col cols="1">
+        
+      </v-col>
+      <v-col cols="10" class="d-flex justify-center align-center">
+        <h2>주문완료</h2>
+      </v-col>
+</v-row>
+
       <v-container class="centered-container">
         <div class="order-message">
           <h3>주문을 완료했어요!</h3>
@@ -144,6 +145,13 @@ export default {
 
 .v-icon {
   color: #202020;
+}
+
+
+.centered-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 15px;
 }
 
 .order-message {

@@ -187,7 +187,7 @@ export default {
   data() {
     return {
       types: ['의류', '신발', '리빙', '가죽/모피', '잡화', '수선/기술'], // 종류 항목
-      categories: ['셔츠/블라우스', '신발', '리빙'], // 구분 항목
+      categories: ['셔츠/블라우스', '신발', '리빙','악세서리'], // 구분 항목
       itemsByCategory: {
         '셔츠/블라우스': [
           { name: '셔츠/블라우스', price: 1900 },
@@ -212,6 +212,14 @@ export default {
           { name: '솜/극세사 이불', price: 15000 },
           { name: '오리/거위털 이불', price: 25000 },
           { name: '오리/거위털 이불 대', price: 35000 },
+        ],
+        '악세서리': [
+          { name: '스카프/목도리', price: 4000 },
+          { name: '고급소재 스카프/목도리', price: 7000 },
+          { name: '일반/캡 모자', price: 5000 },
+          { name: '털 모자', price: 10000 },
+          { name: '모직 장갑', price: 6000 },
+          { name: '털 장갑', price: 9000 },
         ]
       },
       selectedType: null,
@@ -331,9 +339,9 @@ export default {
   color: #202020;
 }
 
-/* 기본 스타일 */
+/* 여기서부터 */
 .form-container {
-  max-width: 600px;
+  max-width: 900px;
   margin: 20px auto;
   padding: 15px;
   background: #ffffff;
@@ -345,6 +353,7 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+  
 }
 
 .form-group {
@@ -362,6 +371,7 @@ export default {
   position: relative;
   display: inline-block;
   width: 100%;
+  
 }
 
 .select-trigger {
@@ -369,18 +379,28 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 6px;
-  border-bottom: 1px solid #CACACA; /* 이거랑 */
+  border-bottom: 1px solid #CACACA; /*이 친구랑 */
   background: transparent;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+}
+
+@media (max-width: 600px) {
+  .select-trigger {
+    max-width: 90px;
+  }
 }
 
 .select-trigger .arrow {
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid #64B5F6;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #64B5F6;
 }
 
 .select-options {
@@ -389,19 +409,24 @@ export default {
   left: 0;
   width: 100%;
   background: #fff;
-  border: 1px solid #333;
-  border-radius: 0;
+  border: 1px solid #ddd; 
+  border-radius: 4px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
   z-index: 1000;
+  overflow: hidden; 
 }
 
 .select-option {
-  padding: 6px;
+  padding: 10px 12px; 
   cursor: pointer;
-  font-size: 12px; 
+  font-size: 14px; 
+  color: #333; 
+  transition: background 0.3s, color 0.3s;
 }
 
 .select-option:hover {
-  background: #f0f0f0;
+  background: #f5f5f5; 
+  color: #2196F3; 
 }
 
 .disabled {
@@ -412,11 +437,11 @@ export default {
 .form-group input {
   width: 100%;
   padding: 6px;
-  border-bottom: 1px solid #CACACA; /* 이거랑 */
+  border-bottom: 1px solid #CACACA; /* 이 친구랑 */
   border-radius: 0;
   background: transparent;
   box-sizing: border-box;
-  font-size: 12px; 
+  font-size: 14px; 
 }
 
 .button-group {
@@ -438,10 +463,9 @@ export default {
 }
 
 /* 선택목록 */
-/* 기본 선택목록 박스 스타일 */
 .selection-box {
   width: 100%; 
-  max-width: 600px; /* 최대 너비 설정 */
+  max-width: 900px; /* 최대 너비 설정 */
   margin: 20px auto;
   border-radius: 8px;
   padding: 15px;
@@ -554,7 +578,7 @@ export default {
 
 /* 새로운 섹션 */
 .shipping-container {
-  max-width: 600px;
+  max-width: 900px;
   margin: 20px auto;
   background: #ffffff;
   border-radius: 8px;
@@ -729,7 +753,7 @@ export default {
 
 /* 결제 금액 섹션 */
 .payment-summary {
-  max-width: 600px;
+  max-width: 900px;
   margin: 20px auto;
   padding: 15px;
   background: #ffffff;
