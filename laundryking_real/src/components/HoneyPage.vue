@@ -272,6 +272,7 @@ export default {
 .honey-list {
   width: 100%;
   text-align: center; 
+  max-width: 900px;
 }
 
 .honey-image {

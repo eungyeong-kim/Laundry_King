@@ -139,7 +139,6 @@ export default {
   align-items: center;
   width: 100%;
   max-width: 300px;
-  height: 850px;
 }
 
 .event-card {
