@@ -2,6 +2,7 @@
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 // Firebase 초기화
 const firebaseConfig = {
@@ -20,3 +21,8 @@ if (!firebase.apps.length) {
 
 // Firebase 인증 가져오기
 export const firebaseAuth = firebase.auth();
+
+// Firestore 인스턴스 가져오기
+const db = firebase.firestore();
+
+export default db;

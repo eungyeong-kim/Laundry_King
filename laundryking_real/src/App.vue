@@ -9,69 +9,26 @@
         <v-list-item title="MENU" class="text-center"></v-list-item>
         <v-divider></v-divider>
 
-        <v-list-item @click="navTo('/')">
+        <v-list-item v-for="(item, i) in fnGetMenuItems" :to="item.to" :key="i">
           <v-list-item-content>
             <v-list-item-title class="d-flex align-cneter">
-              <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">home</span></v-icon>
-              HOME
+              <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">{{ item.icon }}</span></v-icon>
+              {{ item.title }}
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item @click="navTo('/login')">
-          <v-list-item-content>
-            <v-list-item-title class="d-flex align-cneter">
-              <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">logout</span></v-icon>
-              LOGIN
-              <v-icon class="ml-auto" color="blue">mdi-chevron-right</v-icon>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        
-        <v-list-item @click="navTo('/info')">
-          <v-list-item-content>
-            <v-list-item-title class="d-flex align-cneter">
-              <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">info</span></v-icon>
-              NOTICE
-              <v-icon class="ml-auto" color="blue">mdi-chevron-right</v-icon>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        
-        <v-list-item @click="navTo('/qna')">
-          <v-list-item-content>
-            <v-list-item-title class="d-flex align-cneter">
-              <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">help</span></v-icon>
-              FAQ
-              <v-icon class="ml-auto" color="blue">mdi-chevron-right</v-icon>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        
-        <v-list-item @click="navTo('/event')">
-          <v-list-item-content>
-            <v-list-item-title class="d-flex align-cneter">
-              <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">featured_seasonal_and_gifts</span></v-icon>
-              EVENT
-              <v-icon class="ml-auto" color="blue">mdi-chevron-right</v-icon>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        
-        <v-list-item @click="navTo('/orderhistory')">
-          <v-list-item-content>
-            <v-list-item-title class="d-flex align-cneter">
-              <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">receipt_long</span></v-icon>
-              ORDER HISTORY
-              <v-icon class="ml-auto" color="blue">mdi-chevron-right</v-icon>
-            </v-list-item-title>
-          </v-list-item-content>
+        <v-list-item @click="fnDoLogout" v-if="fnGetAuthStatus" class="logout_btn">
+          <v-list-item-title>
+            <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">logout</span></v-icon>
+            로그아웃
+          </v-list-item-title>
         </v-list-item>
       </v-list>
       
     </v-navigation-drawer>
     <v-app-bar app dark color="blue">
-    <v-toolbar-title class="d-flex justify-center"><h1><img class="logo" src="/images/images/logo-light.png" alt="세탁왕" width="100"/></h1></v-toolbar-title>
+    <v-toolbar-title class="d-flex justify-center"><h1 @click="goBack"><img class="logo" src="/images/images/logo-light.png" alt="세탁왕" width="100"/></h1></v-toolbar-title>
     
     <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
     </v-app-bar>
@@ -105,23 +62,121 @@
   align-items: center;
 
 }
-
+.v-list {
+  height: 100%;
+}
+.logout_btn {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+h1 {
+  cursor: pointer;
+}
 </style>
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
 import { useRouter} from 'vue-router';
 
 const drawer = ref(false);
 const router = useRouter();
+const store = useStore();
 
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
 };
 
-const navTo = (path)=>{
-  router.push(path);
-  drawer.value = false;
-}
+const goBack = () => {
+  router.push('/');
+};
+
+
+// 현재 인증 상태를 가져오는 계산 속성
+const fnGetAuthStatus = computed(() => store.getters.fnGetAuthStatus);
+
+// 로그인 여부에 따라 메뉴 항목을 반환하는 계산 속성
+const fnGetMenuItems = computed(() => {
+  if (!fnGetAuthStatus.value) {
+    return [
+      {
+        title: '홈',
+        to: '/',
+        icon: 'home',
+      },
+      {
+        title: '로그인',
+        to: '/login',
+        icon: 'login',
+      },
+      {
+        title: '공지사항',
+        to: '/info',
+        icon: 'info',
+      },
+      {
+        title: '자주묻는질문',
+        to: '/qna',
+        icon: 'help',
+      },
+      {
+        title: '이벤트',
+        to: '/event',
+        icon: 'featured_seasonal_and_gifts',
+      },
+      {
+        title: '이용내역',
+        to: '/userhistory',
+        icon: 'receipt_long',
+      },
+    ];
+  } else {
+    return [
+      {
+        title: '홈',
+        to: '/',
+        icon: 'home',
+      },
+      {
+        title: `${user.value.name} 님`,
+        to: '/user',
+        icon: 'account_circle',
+      },
+      {
+        title: '공지사항',
+        to: '/info',
+        icon: 'info',
+      },
+      {
+        title: '자주묻는질문',
+        to: '/qna',
+        icon: 'help',
+      },
+      {
+        title: '이벤트',
+        to: '/event',
+        icon: 'featured_seasonal_and_gifts',
+      },
+      {
+        title: '이용내역',
+        to: '/userhistory',
+        icon: 'receipt_long',
+      },
+    ];
+  }
+});
+
+// 로그아웃 메서드
+const fnDoLogout = () => {
+  store.dispatch('fnDoLogout').then(() => {
+    router.push('/login'); // 로그아웃 후 리디렉션
+  });
+};
+
+
+// 사용자 데이터 가져오기
+const user = computed(() => store.getters.fnGetUser);
+
 </script>

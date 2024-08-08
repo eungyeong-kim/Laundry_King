@@ -1,106 +1,130 @@
-import firebase from "firebase/compat/app"
-import "firebase/compat/auth"
-import router from "@/router"
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import router from "@/router";
+import db from "@/firebase"; // Firestore를 import합니다.
 
 export default {
-    state: {
-        oUser: null
+  state: {
+    oUser: null,
+  },
+  mutations: {
+    fnSetUser(state, payload) {
+      state.oUser = payload;
     },
-    mutations: {
-        fnSetUser(state, payload){
-            state.oUser = payload
-        }
+  },
+  getters: {
+    fnGetUser(state) {
+      // 사용자 정보
+      return state.oUser;
     },
-    getters: {
-        fnGetUser(state){ // 사용자 정보
-            return state.oUser
-        },
-        fnGetAuthStatus(state){ // 로그인 상태
-            return (state.oUser != null)
-        }
+    fnGetAuthStatus(state) {
+      // 로그인 상태
+      return state.oUser != null;
     },
-    actions: {
+  },
+  actions: {
+    // email 회원가입
+    async fnRegisterUser({ commit }, payload) {
+      commit("fnSetLoading", true); // 로딩 상태로 변경
+      try {
+        // Firebase 인증을 통한 유저 생성
+        const pUserInfo = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(payload.pEmail, payload.pPassword);
 
-        //email 회원가입
-        fnRegisterUser( {commit}, payload) {
-            commit("fnSetLoading", true) // 로딩 상태로 변경
+        // Firestore에 사용자 정보 저장
+        await db.collection("users").doc(pUserInfo.user.uid).set({
+          email: pUserInfo.user.email,
+          name: payload.pName, // 이름 정보 추가
+          createdAt: new Date(), // 생성 날짜를 추가합니다.
+        });
 
-            firebase.auth().createUserWithEmailAndPassword(payload.pEmail, payload.pPassword).then(pUserInfo => {
-                commit("fnSetUser", {
-                    email: pUserInfo.user.email
-                })
-                commit("fnSetLoading", false) // 로딩 완료
-                commit("fnSetErrorMessage", "") // 에러메세지 초기화
-                router.push("/main")
-            })
-            .catch(err => {
-                commit("fnSetErrorMessage", err.message)
-                commit("fnSetLoading", false)
-            })
-        },
+        commit("fnSetUser", {
+          email: pUserInfo.user.email,
+          name: payload.pName, // 이름 정보 추가
+        });
+        commit("fnSetLoading", false); // 로딩 완료
+        commit("fnSetErrorMessage", ""); // 에러메세지 초기화
+        router.push("/main");
+      } catch (err) {
+        commit("fnSetErrorMessage", err.message);
+        commit("fnSetLoading", false);
+      }
+    },
 
-        // email 로그인
-        fnDoLogin({commit}, payload){
-            commit("fnSetLoading", true) // 로딩 상태로 변경
-
-            firebase.auth().signInWithEmailAndPassword(payload.pEmail, payload.pPassword)
-            .then(pUserInfo => {
-                commit("fnSetUser", {
-                    name: pUserInfo.user.email
-                })
-                commit("fnSetLoading", false) // 로딩완료
-                commit("fnSetErrorMessage", "")
-                router.push("/main") // 로그인 후 main 으로 이동
-            })
-            .catch(err => {
-                commit("fnSetErrorMessage", err.message)
-                commit("fnSetLoading", false)
-            })
-        },
-
-        //구글 로그인
-        fnDoGoogleLogin_Popup({commit}){
-            commit("fnSetLoading", true) // 로딩 상태로 변경
-
-            var oProvider = new firebase.auth.GoogleAuthProvider();
-            oProvider.addScope("profile");
-            oProvider.addScope("email");
-            firebase.auth().signInWithPopup(oProvider)
-            .then(pUserInfo => {
-                commit("fnSetUser", {
-                    id: pUserInfo.user.uid,
-                    name: pUserInfo.user.displayName,
-                    email: pUserInfo.user.email,
-                    photoURL: pUserInfo.user.photoURL
-                })
-                commit("fnsetLoading", false) // 로딩 완료
-                commit("fnSetErrorMessage", "")
-                router.push("/main")
-            })
-            .catch(err => {
-                commit("fnSetErrorMessage", err.message)
-                commit("fnSetLoading", false)
-            })
-        },
-
-        //자동 로그인
-        fnDoLoginAuto({commit}, pUserInfo) {
-            //로그인 시 스토어에 정보 저장
+    // email 로그인
+    fnDoLogin({ commit }, payload) {
+        commit("fnSetLoading", true); // 로딩 상태로 변경
+      
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(payload.pEmail, payload.pPassword)
+          .then(async (pUserInfo) => {
+            // Firestore에서 사용자 정보 가져오기
+            const userDoc = await db.collection("users").doc(pUserInfo.user.uid).get();
+            const userData = userDoc.data();
+      
             commit("fnSetUser", {
-                id: pUserInfo.uid,
-                name: pUserInfo.displayName,
-                email: pUserInfo.email,
-                photoURL: pUserInfo.photoURL
-            })
-            commit("fnSetLoading", false) // 로딩완료 상태로 변경
-            commit("fnSetErrorMessage", "")
-        },
+              id: pUserInfo.user.uid,
+              name: userData.name, // Firestore에서 가져온 사용자 이름
+              email: pUserInfo.user.email,
+              photoURL: pUserInfo.user.photoURL,
+            });
+            commit("fnSetLoading", false); // 로딩완료
+            commit("fnSetErrorMessage", "");
+            router.push("/main"); // 로그인 후 main 으로 이동
+          })
+          .catch((err) => {
+            commit("fnSetErrorMessage", err.message);
+            commit("fnSetLoading", false);
+          });
+      },
 
-        //로그아웃
-        fnDoLogout({commit}) {
-            firebase.auth().signOut()
-            commit("fnSetUser", null)
-            router.push("/")
-        }
-    }
-}
+    //구글 로그인
+    fnDoGoogleLogin_Popup({ commit }) {
+      commit("fnSetLoading", true); // 로딩 상태로 변경
+
+      var oProvider = new firebase.auth.GoogleAuthProvider();
+      oProvider.addScope("profile");
+      oProvider.addScope("email");
+      firebase
+        .auth()
+        .signInWithPopup(oProvider)
+        .then((pUserInfo) => {
+          commit("fnSetUser", {
+            id: pUserInfo.user.uid,
+            name: pUserInfo.user.displayName,
+            email: pUserInfo.user.email,
+            photoURL: pUserInfo.user.photoURL,
+          });
+          commit("fnSetLoading", false); // 로딩 완료
+          commit("fnSetErrorMessage", "");
+          router.push("/main");
+        })
+        .catch((err) => {
+          commit("fnSetErrorMessage", err.message);
+          commit("fnSetLoading", false);
+        });
+    },
+
+    //자동 로그인
+    fnDoLoginAuto({ commit }, pUserInfo) {
+      //로그인 시 스토어에 정보 저장
+      commit("fnSetUser", {
+        id: pUserInfo.uid,
+        name: pUserInfo.displayName,
+        email: pUserInfo.email,
+        photoURL: pUserInfo.photoURL,
+      });
+      commit("fnSetLoading", false); // 로딩완료 상태로 변경
+      commit("fnSetErrorMessage", "");
+    },
+
+    //로그아웃
+    fnDoLogout({ commit }) {
+      firebase.auth().signOut();
+      commit("fnSetUser", null);
+      router.push("/");
+    },
+  },
+};

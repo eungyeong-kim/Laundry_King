@@ -17,7 +17,7 @@ import PickupApplyPage from '@/components/PickupApplyPage.vue'
 import PickupPage from '@/components/PickupPage.vue'
 import QnaPage from '@/components/QnaPage.vue'
 import UserHistoryPage from '@/components/UserHistoryPage.vue'
-
+import UserPage from '@/components/UserPage.vue'
 
 
 
@@ -116,6 +116,12 @@ const routes = [
     path: '/userhistory',
     name: 'userhistory',
     component: UserHistoryPage,
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: UserPage,
+    meta: { bAuth: true } // 인증이 필요한 페이지
   }
 ]
 
