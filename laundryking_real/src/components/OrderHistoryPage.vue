@@ -16,15 +16,13 @@
             <v-tabs-window v-model="tab">
                 <v-tabs-window-item v-for="(tabList,index) in tabs" :key="index">
                     <p class="text-center mb-10 mt-10 notice" >{{ tabList.notice }}</p>
-                    <div class="listItem" v-for="(order,index) in tabList.orderListContent" :key="index">
+                    <div class="listItem mb-3" v-for="(order,index) in tabList.orderListContent" :key="index">
                         
-                        <p class="d-flex justify-space-between mr-5 ml-5"><span class="">{{ order.status }}</span><span>{{ order.orderNumber }}</span></p>
-                        <hr>
-                        <p class="d-flex justify-space-between mr-5 ml-5">{{orderListTitle}} {{ tabList.orderList }}</p>
-                        <p class="d-flex justify-space-between mr-5 ml-5">{{preDateTitle}} {{ order.preDate }}</p>
-                        <p class="d-flex justify-space-between mr-5 ml-5">{{deliverTitle}} {{ order.deliver }}</p>
-                        <hr>
-                        <p>{{chargeTitle}} {{ order.charge }}</p>
+                        <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1">{{ order.status }}</span><span class="mb-1">{{ order.orderNumber }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5"><span class="mt-1">{{orderListTitle}}</span> <span class="mt-1">{{ order.orderList }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5"><span>{{preDateTitle}}</span> <span>{{ order.preDate }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1">{{deliverTitle}}</span> <span>{{ order.deliver }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5"><span class="mt-1">{{chargeTitle}}</span> <span class="mt-1">{{ order.charge }}</span></p>
                     </div>
                 </v-tabs-window-item>
             </v-tabs-window>
@@ -50,7 +48,7 @@
                     orderListContent:[
                     {status:"주문완료",
                     orderNumber:"주문번호 21081",
-                    orderList:"와이셔츠 1개, 블라우스 2개 외 3건",
+                    orderList:"블라우스 2개 외 3건",
                     preDate: "7월 25일 목요일",
                     deliver: "7월 30일 화요일",
                     charge: "34,900원"},
@@ -115,6 +113,11 @@
     width: 450px;
     margin:auto;
     border-radius: 11px;
-
+    padding: 15px;
+    box-sizing: border-box;
+    line-height: 2;
+}
+.orderStatus{
+    border-bottom: 1px solid #A1A8BD;
 }
 </style>
