@@ -50,7 +50,7 @@
     export default{
         data(){
         return{
-            selectedTab: null,
+            selectedTab: 0,
             items:[
             {
             select: "일반배송",
