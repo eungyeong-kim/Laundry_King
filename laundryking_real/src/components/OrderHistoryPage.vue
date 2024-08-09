@@ -18,11 +18,11 @@
                     <p class="text-center mb-10 mt-10 notice" >{{ tabList.notice }}</p>
                     <div class="listItem mb-3" v-for="(order,index) in tabList.orderListContent" :key="index">
                         
-                        <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1">{{ order.status }}</span><span class="mb-1">{{ order.orderNumber }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1 status_style">{{ order.status }}</span><span class="mb-1">{{ order.orderNumber }}</span></p>
                         <p class="d-flex justify-space-between mr-5 ml-5"><span class="mt-1">{{orderListTitle}}</span> <span class="mt-1">{{ order.orderList }}</span></p>
                         <p class="d-flex justify-space-between mr-5 ml-5"><span>{{preDateTitle}}</span> <span>{{ order.preDate }}</span></p>
                         <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1">{{deliverTitle}}</span> <span>{{ order.deliver }}</span></p>
-                        <p class="d-flex justify-space-between mr-5 ml-5"><span class="mt-1">{{chargeTitle}}</span> <span class="mt-1">{{ order.charge }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5 charge_font"><span class="mt-1">{{chargeTitle}}</span> <span class="mt-1 font-weight-bold">{{ order.charge }}</span></p>
                     </div>
                 </v-tabs-window-item>
             </v-tabs-window>
@@ -49,6 +49,12 @@
                     {status:"주문완료",
                     orderNumber:"주문번호 21081",
                     orderList:"블라우스 2개 외 3건",
+                    preDate: "7월 25일 목요일",
+                    deliver: "7월 30일 화요일",
+                    charge: "34,900원"},
+                    {status:"주문완료",
+                    orderNumber:"주문번호 21081",
+                    orderList:"와이셔츠 1개, 블라우스 2개 외 3건",
                     preDate: "7월 25일 목요일",
                     deliver: "7월 30일 화요일",
                     charge: "34,900원"},
@@ -110,14 +116,26 @@
 }
 .listItem{
     border: 2px solid #F0F2F9;
-    width: 450px;
+    width: 460px;
     margin:auto;
-    border-radius: 11px;
-    padding: 15px;
+    border-radius: 35px;
+    padding: 15px 5px;
     box-sizing: border-box;
-    line-height: 2;
+    line-height: 2.2;
+    font-size: 17px;
+}
+.status_style{
+    border: 2px solid #64B5F6;
+    border-radius: 20px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    background-color:#f4fafe;
+    color: #64B5F6
 }
 .orderStatus{
-    border-bottom: 1px solid #A1A8BD;
+    border-bottom: 1px solid #CCD3E8;
+}
+.charge_font{
+    font-size: 20px;
 }
 </style>
