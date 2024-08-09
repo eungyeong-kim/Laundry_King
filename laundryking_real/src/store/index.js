@@ -2,6 +2,9 @@ import { createStore } from 'vuex';
 import VuexPersistence from "vuex-persist"
 import modCommon from "./store-mod/common"
 import modProvider from "./store-mod/provider"
+import modDatabase from "./store-mod/database"
+import database from './store-mod/database';
+
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
@@ -22,7 +25,8 @@ export default createStore({
   },
   modules: {
     common: modCommon,
-    provider: modProvider
+    provider: modProvider,
+    database: modDatabase
   },
   plugins: [vuexLocal.plugin], // VuexPersistence 플러그인 사용
 })

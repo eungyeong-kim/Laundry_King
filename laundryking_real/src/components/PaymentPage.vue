@@ -59,7 +59,7 @@
           <label for="item">품목</label>
           <div class="custom-select">
             <div class="select-trigger" @click="toggleDropdown('item')" :class="{ disabled: !selectedCategory }">
-              <span>{{ selectedItem || '품목 선택' }}</span>
+              <span>{{ selectedItem ? selectedItem.name : '품목 선택' }}</span>
               <span class="arrow"></span>
             </div>
             <div class="select-options" v-if="showItemDropdown">
@@ -105,7 +105,7 @@
             <input
               type="number"
               v-model.number="item.quantity"
-              @input="updateAmount(item)"
+              @input="updateItemAmount(item)"
               min="1"
               class="quantity-input"
             />
@@ -131,131 +131,74 @@
             type="number"
             id="box-quantity"
             v-model.number="boxQuantity"
+            @input="updateTotalAmount"
             min="1"
             class="box-input"
           />
           <button @click="changeBoxQuantity(1)">+</button>
         </div>
-        <p class="pickupfee">택배 픽업비: {{ pickupFee.toLocaleString() }} 원</p>
       </div>
-
-      <div class="notice-box-wrapper">
-        <div class="notice-box">
-          <div class="notice-box-header">
-            <img src="/images/images/info.png" alt="Info Icon" class="notice-box-icon" />
-            <span class="notice-box-text">유의사항</span>
-          </div>
-          <div class="notice-box-detail">
-            <p class="notice-box-detail-text">
-              • 주문접수 시 택배비가 선결제됩니다. <br>
-              • 가로+세로+높이 합계가 150cm 이상인 박스의 경우 택배사에서 인수 거부 또는 추가 요금이 발생할 수 있습니다. <br>
-              • 택배비 추가 요금 발생 시, 차액은 세탁 요금에 부과됩니다. <br>
-              • 택배 기사 방문 시, 고객 부재 또는 포장 미비 등의 이유로 택배 수거가 2회 이상 실패한 경우 주문이 자동으로 취소되며, 결제하신 접수 택배비는 위약금으로 환불이 불가능합니다.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 체크박스 추가 -->
-      <div class="checkbox-container">
-        <input type="checkbox" id="terms-checkbox" v-model="termsChecked" />
-        <label for="terms-checkbox">주문 시 유의사항을 확인했습니다.</label>
+      <div class="total-amount">
+        상품 금액: {{ totalAmount.toLocaleString() }} 원
+        <br />
+        픽업 택배비: {{ pickupFee.toLocaleString() }} 원
+        <br />
+        결제 금액: {{ (totalAmount + pickupFee).toLocaleString() }} 원
       </div>
     </div>
 
-    <!-- 결제 금액과 신청하기 버튼 추가 -->
-    <div class="payment-summary">
-      <div class="summary-details">
-        <p>상품 금액: {{ totalAmount.toLocaleString() }} 원</p>
-        <p>택배 픽업비: {{ pickupFee.toLocaleString() }} 원</p>
-        <hr class="separator" />
-        <p class="total-payment">총 결제 금액: {{ (totalAmount + pickupFee).toLocaleString() }} 원</p>
-      </div>
-    </div>
-
-    <div class="payment-summary">
-      <div class="button-group">
-        <button @click="goToOrderSuccess" :disabled="!termsChecked || totalAmount < 30000" class="submit-button">신청하기</button>
-      </div>
+    <!-- 신청하기 버튼 추가 -->
+    <div class="apply-button-container">
+      <button @click="applyOrder" :disabled="!selectedItems.length">신청하기</button>
     </div>
   </div>
 </template>
 
-
 <script>
+import { mapGetters, mapActions, mapMutations } from 'vuex';
+
 export default {
   data() {
     return {
-      types: ['의류', '신발', '리빙', '가죽/모피', '잡화', '수선/기술'], // 종류 항목
-      categories: ['셔츠/블라우스', '신발', '리빙','악세서리'], // 구분 항목
-      itemsByCategory: {
-        '셔츠/블라우스': [
-          { name: '셔츠/블라우스', price: 1900 },
-          { name: '슬림핏 와이셔츠/교복셔츠', price: 3000 },
-          { name: '남방/티셔츠', price: 4000 },
-          { name: '롱/빅 와이셔츠', price: 4000 },
-          { name: '롱/빅 남방/티셔츠', price: 5000 },
-          { name: '린넨/골덴/데님/면 셔츠', price: 7000 }
-        ],
-        '신발': [
-          { name: '운동화', price: 7000 },
-          { name: '발목 운동화', price: 8000 },
-          { name: '아동 운동화', price: 8000 },
-          { name: '슬리퍼', price: 7000 },
-          { name: '어그 슬리퍼', price: 12000 },
-          { name: '준 명품 운동화', price: 20000 },
-        ],
-        '리빙': [
-          { name: '이불', price: 10000 },
-          { name: '이불 커버', price: 12000 },
-          { name: '이불 커버 대', price: 16000 },
-          { name: '솜/극세사 이불', price: 15000 },
-          { name: '오리/거위털 이불', price: 25000 },
-          { name: '오리/거위털 이불 대', price: 35000 },
-        ],
-        '악세서리': [
-          { name: '스카프/목도리', price: 4000 },
-          { name: '고급소재 스카프/목도리', price: 7000 },
-          { name: '일반/캡 모자', price: 5000 },
-          { name: '털 모자', price: 10000 },
-          { name: '모직 장갑', price: 6000 },
-          { name: '털 장갑', price: 9000 },
-        ]
-      },
-      selectedType: null,
-      selectedCategory: null,
-      selectedItem: null,
-      amount: null,
-      filteredItems: [],
       showTypeDropdown: false,
       showCategoryDropdown: false,
       showItemDropdown: false,
+      selectedType: '',
+      selectedCategory: '',
+      selectedItem: null,
+      amount: 0,
+      types: ['Type1', 'Type2', 'Type3'], // 예시 데이터
+      categories: ['Category1', 'Category2', 'Category3'], // 예시 데이터
+      itemsByCategory: {
+        Category1: [{ name: 'Item1', price: 1000 }, { name: 'Item2', price: 2000 }],
+        Category2: [{ name: 'Item3', price: 3000 }, { name: 'Item4', price: 4000 }],
+        Category3: [{ name: 'Item5', price: 5000 }, { name: 'Item6', price: 6000 }],
+      },
       selectedItems: [],
       boxQuantity: 1,
-      pickupFeePerBox: 4900,
-      termsChecked: false
+      pickupFeePerBox: 4900, // 박스당 픽업비
     };
   },
   computed: {
+    ...mapGetters(['fnGetOrderInfo']),
+    filteredItems() {
+      return this.itemsByCategory[this.selectedCategory] || [];
+    },
     totalAmount() {
       return this.selectedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     },
     pickupFee() {
-      return this.boxQuantity * this.pickupFeePerBox;
+      return this.boxQuantity * this.pickupFeePerBox; // 박스 개수에 따른 픽업비
     }
   },
   methods: {
-    goBack() {
-      window.location.href = '/orderinfo';
-    },
+    ...mapActions(['submitOrder']),
+    ...mapMutations(['setOrderInfo']),
     toggleDropdown(type) {
       if (type === 'type') {
         this.showTypeDropdown = !this.showTypeDropdown;
-        this.showCategoryDropdown = false;
-        this.showItemDropdown = false;
       } else if (type === 'category') {
         this.showCategoryDropdown = !this.showCategoryDropdown;
-        this.showItemDropdown = false;
       } else if (type === 'item') {
         this.showItemDropdown = !this.showItemDropdown;
       }
@@ -263,72 +206,104 @@ export default {
     selectType(type) {
       this.selectedType = type;
       this.showTypeDropdown = false;
+      this.setOrderInfo({ type });
     },
     selectCategory(category) {
       this.selectedCategory = category;
-      this.filteredItems = this.itemsByCategory[category];
-      this.selectedItem = null;
-      this.amount = null;
       this.showCategoryDropdown = false;
+      this.setOrderInfo({ category });
+      this.selectedItem = null; // 품목 초기화
+      this.amount = 0; // 금액 초기화
     },
     selectItem(item) {
-      this.selectedItem = item.name;
+      this.selectedItem = item;
       this.amount = item.price;
       this.showItemDropdown = false;
-    },
-    submitForm() {
-      if (this.selectedCategory && this.selectedItem) {
-        const item = this.itemsByCategory[this.selectedCategory].find(i => i.name === this.selectedItem);
-        if (item) {
-          const existingItemIndex = this.selectedItems.findIndex(i => i.name === item.name);
-          if (existingItemIndex > -1) {
-            this.selectedItems[existingItemIndex].quantity += 1;
-          } else {
-            this.selectedItems.push({ ...item, quantity: 1 });
-          }
-          this.resetForm();
-        }
+      const existingItem = this.selectedItems.find(i => i.name === item.name);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        this.selectedItems.push({ ...item, quantity: 1 });
       }
-    },
-    resetForm() {
-      this.selectedType = null;
-      this.selectedCategory = null;
-      this.selectedItem = null;
-      this.amount = null;
-      this.showTypeDropdown = false;
-      this.showCategoryDropdown = false;
-      this.showItemDropdown = false;
+      this.setOrderInfo({ item: item.name, amount: item.price });
     },
     changeQuantity(item, amount) {
-      const selectedItem = this.selectedItems.find(i => i.name === item.name);
-      if (selectedItem) {
-        selectedItem.quantity += amount;
-        if (selectedItem.quantity <= 0) {
-          this.removeItem(this.selectedItems.indexOf(selectedItem));
+      const index = this.selectedItems.findIndex(i => i.name === item.name);
+      if (index !== -1) {
+        this.selectedItems[index].quantity += amount;
+        if (this.selectedItems[index].quantity <= 0) {
+          this.removeItem(index);
         } else {
-          this.updateAmount(selectedItem);
+          this.updateItemAmount(this.selectedItems[index]);
         }
       }
     },
-    updateAmount(item) {
-      this.amount = item.price * item.quantity;
+    updateItemAmount(item) {
+      this.setOrderInfo({ amount: item.price * item.quantity });
+      this.updateTotalAmount();
     },
     removeItem(index) {
       this.selectedItems.splice(index, 1);
+      this.updateTotalAmount();
+    },
+    updateTotalAmount() {
+      this.setOrderInfo({ totalAmount: this.totalAmount });
     },
     changeBoxQuantity(amount) {
-      this.boxQuantity = Math.max(this.boxQuantity + amount, 1);
-    },
-    goToOrderSuccess() {
-      if (this.termsChecked && this.totalAmount >= 30000) {
-        window.location.href = '/ordersuccess';
+      this.boxQuantity += amount;
+      if (this.boxQuantity <= 0) {
+        this.boxQuantity = 1;
       }
+      this.updateTotalAmount();
+    },
+    applyOrder() {
+      // Order information setup
+      const orderInfo = {
+        type: this.selectedType,
+        category: this.selectedCategory,
+        item: this.selectedItem ? this.selectedItem.name : '',
+        amount: this.totalAmount,
+        boxQuantity: this.boxQuantity,
+        pickupFee: this.pickupFee,
+        totalAmount: this.totalAmount + this.pickupFee
+      };
+      this.setOrderInfo(orderInfo);
+      this.submitOrder().then(() => {
+        alert('Order submitted successfully');
+      }).catch(error => {
+        console.error('Error submitting order:', error);
+      });
+    },
+    goBack() {
+      this.$router.go(-1);
     }
-  }
+  },
 };
 </script>
-
 <style scoped>
+/* Your CSS styling here */
+.apply-button-container {
+  text-align: center;
+  margin-top: 20px;
+}
+.apply-button-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.apply-button-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+
+
+
+
 .material-symbols-outlined {
   font-size: 80px;
   color: #A1A8BD;

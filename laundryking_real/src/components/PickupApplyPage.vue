@@ -1,11 +1,20 @@
 <template>
   <v-app>
     <v-main>
-      <v-row style="padding:0;">
-        <v-col cols="1"><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
-        <v-col cols="10" class="d-flex justify-center align-center"><h2>택배픽업신청</h2></v-col>
-        </v-row>
       <v-container class="centered-container">
+        <!-- 헤더 부분 -->
+        <v-row class="header-row">
+          <v-col class="header-col">
+            <button @click="goBack">
+              <span class="material-symbols-outlined">chevron_backward</span>
+            </button>
+          </v-col>
+          <v-col class="header-col">
+            <h2>택배픽업 신청</h2>
+          </v-col>
+          <v-col></v-col>
+        </v-row>
+
         <!-- 폼 부분 -->
         <v-row class="form-row">
           <v-col cols="12" md="6">
@@ -85,6 +94,7 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   data() {
@@ -98,20 +108,34 @@ export default {
       sentCode: '', // 서버로부터 받은 인증번호
     };
   },
+  computed: {
+    ...mapState(['order']),
+  },
   methods: {
+    ...mapMutations(['setOrderInfo']),
     goBack() {
-      this.$router.push('/main');
+      this.$router.push('/pickupapply');
     },
-    submit() {
-      if (this.$refs.form.validate()) {
-        console.log('Form submitted:', {
+    async submit() {
+      if (this.$refs.form.validate() && this.valid) {
+        // Vuex에 주문 정보 저장
+        this.setOrderInfo({
           name: this.name,
           address: this.address,
           detailAddress: this.detailAddress,
           phone: this.phone,
           verificationCode: this.verificationCode,
         });
-        this.$router.push('/orderinfo'); // /orderinfo 페이지로 이동
+        try {
+          // 주문 정보 제출
+          await this.$store.dispatch('submitOrder');
+          this.$router.push('/payment'); // /payment 페이지로 이동
+        } catch (error) {
+          console.error('Error submitting order:', error);
+          alert('주문 정보 제출 중 오류가 발생했습니다.');
+        }
+      } else {
+        console.log('Form validation failed');
       }
     },
     searchAddress() {
@@ -140,10 +164,13 @@ export default {
   },
   mounted() {
     // Daum 우편번호 API 스크립트를 동적으로 로드합니다.
-    const script = document.createElement('script');
-    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-    script.async = true;
-    document.head.appendChild(script);
+    if (!document.querySelector('#daum-postcode-script')) {
+      const script = document.createElement('script');
+      script.id = 'daum-postcode-script';
+      script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+      script.async = true;
+      document.head.appendChild(script);
+    }
   },
   setup() {
     const router = useRouter();
@@ -153,22 +180,24 @@ export default {
 </script>
 
 <style scoped>
-
-.material-symbols-outlined {
-  font-size: 80px;
-  color: #A1A8BD;
-  font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 24;
-}
-
-.v-icon {
-  color: #202020;
-}
 .centered-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+.header-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+
+.header-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .form-row {
   width: 100%;
@@ -190,7 +219,7 @@ export default {
   width: 100%;
   border: none;
   border-bottom: 1px solid #E0E0E0; /* 하단 선 추가 */
-  background-color: transparent; 
+  background-color: transparent; /* 배경색 제거 */
   padding: 8px 4px;
   box-sizing: border-box;
 }
@@ -212,16 +241,16 @@ export default {
 .address-button {
   position: absolute;
   right: 0;
-  top: 10px; 
+  top: 10px; /* 인풋 필드 상단에 버튼 위치 */
   padding: 0;
   min-width: 50px;
-  height: 32px; 
+  height: 32px; /* 버튼 높이 조정 */
   box-shadow: none;
   color: #A1A8BD;
 }
 
 .address-input-wrapper .custom-input {
-  padding-right: 50px; 
+  padding-right: 50px; /* 버튼을 위한 공간 확보 */
 }
 
 .phone-button,
@@ -231,7 +260,7 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   padding: 0;
-  height: 32px; 
+  height: 32px; /* 버튼 높이 조정 */
   display: flex;
   border: 1px solid #A1A8BD;
   box-shadow: none;
@@ -244,5 +273,6 @@ export default {
   color: #ffffff;
   border-radius: 10px;
   box-shadow: none;
+
 }
 </style>
