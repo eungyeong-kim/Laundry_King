@@ -1,10 +1,9 @@
 <template>
     <v-container>
-      <v-row>
-        <v-col cols="12" class="text-center">
-          <h2 class="display-1 my-1">Logged</h2>
-          <p class="body-1">로그인 한 사용자만 볼 수 있습니다.</p>
-        </v-col>
+      <v-row style="padding:0;">
+          <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
+          <v-col class="d-flex justify-center align-center mt-2"><h2>마이페이지</h2></v-col>
+          <v-col></v-col>
       </v-row>
   
       <v-row>
@@ -16,15 +15,25 @@
             class="avatar_style"
             alt="User Avatar"
           />
+          <img
+            v-else
+            :src="defaultAvatar"
+            class="avatar_style"
+            alt="Default Avatar"
+          />
           <!-- 조건부 렌더링을 통해 사용자 데이터가 있을 때만 표시 -->
-          <h3 class="pt-2 mt-4 grey lighten-2" v-if="user">{{ user.name }}</h3>
+          <h3 class="pt-2 mt-4 grey lighten-2" v-if="user">{{ user.name }} 님</h3>
+          <v-divider class="my-10"></v-divider>
+          <h4>이메일</h4>
           <p class="pb-2 grey lighten-2" v-if="user">{{ user.email }}</p>
+          <p class="pb-2 grey lighten-2" v-if="user">{{ formattedPhoneNumber }}</p>
+          <p class="pb-2 grey lighten-2" v-if="user">{{ user.adress }}</p>
+          <p class="pb-2 grey lighten-2" v-if="user">{{ user.adressDetail }}</p>
         </v-col>
-        <v-col offset="3" cols="6" class="text-center mt-1">
-          <v-btn @click="sendPasswordReset" block color="green" large dark>
-            <v-icon left>mdi-email</v-icon>
-            비밀번호 재설정
-          </v-btn>
+      </v-row>
+      <v-row class="d-flex justify-center mt-15">
+        <v-col cols="5">
+          <v-btn width="100%" height="49px" color="blue" flat @click="fnDoLogout">로그아웃</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -33,35 +42,57 @@
   <script setup>
   import { computed } from 'vue';
   import { useStore } from 'vuex';
-  import { oFirebaseAuth } from '@/firebase';
+  import { useRouter} from 'vue-router';
+
+  const router = useRouter();
   
   // Vuex 스토어를 사용하는 경우
   const store = useStore();
   
   // 사용자 데이터 가져오기
   const user = computed(() => store.getters.fnGetUser);
-  
-  // 비밀번호 재설정 메소드
-  const sendPasswordReset = () => {
-    if (user.value?.email) {
-      oFirebaseAuth.sendPasswordResetEmail(user.value.email)
-        .then(() => {
-          console.log('비밀번호 재설정 메일을 발송했습니다!');
-        })
-        .catch((error) => {
-          console.error('비밀번호 재설정 오류:', error);
-        });
-    } else {
-      console.warn('사용자의 이메일이 없습니다.');
-    }
+
+  console.log(user.value)
+  // 로그아웃 메서드
+  const fnDoLogout = () => {
+    store.dispatch('fnDoLogout').then(() => {
+      router.push('/login'); // 로그아웃 후 리디렉션
+    });
   };
-  </script>
+
+  const goBack = () => {
+    router.push('/');
+  };
+
+  // 전화번호 포맷팅 computed 속성
+  const formattedPhoneNumber = computed(() => {
+    if (!user.value?.phone) return '';
+    return user.value.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+  });
+
+
+  const defaultAvatar = '/images/images/defaultAvatar.png' // 기본 이미지 URL
+</script>
   
-  <style scoped>
-  .avatar_style {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-  }
-  </style>
+<style scoped>
+.material-symbols-outlined {
+    font-size: 80px;
+    color: #A1A8BD;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 100,
+  'GRAD' 0,
+  'opsz' 24
+}
+template, div, footer{
+    padding:0
+}
+
+  
+.avatar_style {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+</style>
   

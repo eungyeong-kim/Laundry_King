@@ -37,11 +37,18 @@ export default {
           email: pUserInfo.user.email,
           name: payload.pName, // 이름 정보 추가
           createdAt: new Date(), // 생성 날짜를 추가합니다.
+          photoURL: pUserInfo.user.photoURL,
+          phone: payload.pPhone, // 전화번호 정보 추가
+          birth: payload.pBirth, // 생년월일 정보 추가
+          postalCode: payload.pPost, // 우편번호 정보 추가
+          adress: payload.pAdress, // 기본주소 정보 추가
+          adressDetail: payload.pAdressdetail, // 상세주소 정보 추가
         });
 
         commit("fnSetUser", {
           email: pUserInfo.user.email,
           name: payload.pName, // 이름 정보 추가
+
         });
         commit("fnSetLoading", false); // 로딩 완료
         commit("fnSetErrorMessage", ""); // 에러메세지 초기화
@@ -69,6 +76,11 @@ export default {
               name: userData.name, // Firestore에서 가져온 사용자 이름
               email: pUserInfo.user.email,
               photoURL: pUserInfo.user.photoURL,
+              phone: userData.phone, // 전화번호 정보 추가
+              birth: userData.birth, // 생년월일 정보 추가
+              postalCode: userData.postalCode, // 우편번호 정보 추가
+              adress: userData.adress, // 기본주소 정보 추가
+              adressDetail: userData.adressDetail, // 상세주소 정보 추가
             });
             commit("fnSetLoading", false); // 로딩완료
             commit("fnSetErrorMessage", "");

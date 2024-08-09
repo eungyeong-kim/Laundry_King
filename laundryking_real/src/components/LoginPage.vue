@@ -32,12 +32,13 @@
 <script setup>
 import { useStore } from 'vuex';
 import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 const store = useStore();
 const sEmail = ref('');
 const sPassword = ref('');
 const bAlert = ref(false);
-
+const router = useRouter();
 
 // computed 속성
 const fnGetLoading = computed(() => store.getters.fnGetLoading);
@@ -49,6 +50,11 @@ const doGoogleLogin = async () => {
   } catch (error) {
     console.error("로그인 중 오류 발생:", error);
   }
+};
+
+
+const goBack = () => {
+  router.push('/');
 };
 
 // 메소드 정의
