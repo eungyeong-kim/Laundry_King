@@ -31,7 +31,7 @@ export default {
         const pUserInfo = await firebase
           .auth()
           .createUserWithEmailAndPassword(payload.pEmail, payload.pPassword);
-
+    
         // Firestore에 사용자 정보 저장
         await db.collection("users").doc(pUserInfo.user.uid).set({
           email: pUserInfo.user.email,
@@ -44,15 +44,13 @@ export default {
           adress: payload.pAdress, // 기본주소 정보 추가
           adressDetail: payload.pAdressdetail, // 상세주소 정보 추가
         });
-
-        commit("fnSetUser", {
-          email: pUserInfo.user.email,
-          name: payload.pName, // 이름 정보 추가
-
-        });
+    
+        // 사용자 정보를 스토어에 저장하지 않음
+        // 회원가입 완료 후 메인 페이지가 아닌 로그인 페이지로 리디렉션
         commit("fnSetLoading", false); // 로딩 완료
         commit("fnSetErrorMessage", ""); // 에러메세지 초기화
-        router.push("/main");
+        // alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다."); // 성공 메시지 표시
+        router.push("/login"); // 로그인 페이지로 이동
       } catch (err) {
         commit("fnSetErrorMessage", err.message);
         commit("fnSetLoading", false);

@@ -13,7 +13,7 @@ export default {
     },
     getters: {
         fnGetLoading(state){
-            return state.bIsLoaging
+            return state.bIsLoading
         },
         fnGetErrorMessage(state){
             return state.sErrorMessage

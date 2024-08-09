@@ -17,9 +17,16 @@
         <v-row class="d-flex justify-center">
             <v-col cols="10">
                 <v-btn width="100%" height="49px" flat color="blue" type="submit" v-if="!fnGetLoading">로그인</v-btn>
-                <v-progress-circular v-if="fnGetLoading" indeterminate :width="7" :size="70" color="green"></v-progress-circular>
-                <v-btn @click="doGoogleLogin" width="100%" height="49px" variant="outlined" color="blue" class="mt-2"><v-icon class="mr-3">mdi-google</v-icon>구글 로그인</v-btn>
-                <v-btn width="100%" height="49px" variant="text" color="blue" class="mt-2" to="/join">회원가입하기</v-btn>
+                <div v-if="fnGetLoading" class="d-flex justify-center">
+                  <v-progress-circular
+                    indeterminate
+                    :size="100"
+                    color="blue"
+                  >
+                  </v-progress-circular>
+                </div>
+                <v-btn @click="doGoogleLogin" width="100%" height="49px" variant="outlined" color="blue" class="mt-2" v-if="!fnGetLoading"><v-icon class="mr-3">mdi-google</v-icon>구글 로그인</v-btn>
+                <v-btn width="100%" height="49px" variant="text" color="blue" class="mt-2" to="/join" v-if="!fnGetLoading">회원가입하기</v-btn>
                 <v-alert class="mt-3" type="error" dismissible v-model="bAlert">
                     {{ fnGetErrMsg }}
                 </v-alert>
@@ -58,11 +65,15 @@ const goBack = () => {
 };
 
 // 메소드 정의
-const fnDoLogin = () => {
-  store.dispatch('fnDoLogin', {
-    pEmail: sEmail.value,
-    pPassword: sPassword.value
-  });
+const fnDoLogin = async () => {
+  try {
+    await store.dispatch('fnDoLogin', {
+      pEmail: sEmail.value,
+      pPassword: sPassword.value
+    });
+  } catch (error) {
+    console.error("로그인 중 오류 발생:", error);
+  }
 };
 
 // watch 정의
