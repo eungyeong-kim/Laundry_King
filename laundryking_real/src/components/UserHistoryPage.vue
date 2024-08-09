@@ -2,17 +2,23 @@
   <v-main style="padding:0;">
         <v-row style="padding:0;">
         <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
-        <v-col class="d-flex justify-center align-center mt-2"><h2>주문내역입니다.</h2></v-col>
+        <v-col class="d-flex justify-center align-center mt-2"></v-col>
         <v-col></v-col>
+        </v-row>
+        <v-row>
+            <v-col>
+                <h2></h2>
+            </v-col>
         </v-row>
     </v-main>
 </template>
 
 <script>
     export default{
+        methods:{
         goBack(){
         this.$router.go(-1);
-        }
+        }}
     }
 </script>
 

@@ -1134,7 +1134,7 @@
   }
   .card_custom {
     font-size: 14px;
-    height: 320px;
+    padding: 15px;
     background-color: #F4FAFE;
     border-radius: 20px;
   }
