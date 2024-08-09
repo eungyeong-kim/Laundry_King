@@ -14,7 +14,7 @@
                 </v-tab>
             </v-tabs>
             <v-tabs-window v-model="tab">
-                <v-tabs-window-item v-for="(tabList,index) in tabs" :key="index">
+                <v-tabs-window-item v-for="(tabList,index) in tabs" :key="index" @click="userHistory">
                     <p class="text-center mb-10 mt-10 notice" >{{ tabList.notice }}</p>
                     <div class="listItem mb-3" v-for="(order,index) in tabList.orderListContent" :key="index">
                         
@@ -88,6 +88,9 @@
         },
         selectTab(index){
             this.selectedTab = index
+        },
+        userHistory(){
+            this.$router.push('/userhistory')
         }
     }
     }
@@ -114,12 +117,14 @@
 .notice{
     color: #A1A8BD
 }
+
 .listItem{
+    cursor: pointer;
     border: 2px solid #F0F2F9;
     width: 460px;
     margin:auto;
-    border-radius: 35px;
-    padding: 15px 5px;
+    border-radius: 30px;
+    padding: 10px 5px;
     box-sizing: border-box;
     line-height: 2.2;
     font-size: 17px;
