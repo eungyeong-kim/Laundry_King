@@ -1,20 +1,20 @@
 <template>
   <v-app>
     <v-main>
-      <v-container class="centered-container">
+      
         <!-- 헤더 부분 -->
-        <v-row class="header-row">
-          <v-col class="header-col">
-            <button @click="goBack">
-              <span class="material-symbols-outlined">chevron_backward</span>
-            </button>
-          </v-col>
-          <v-col class="header-col">
-            <h2>주문정보</h2>
-          </v-col>
-          <v-col></v-col>
-        </v-row>
+        <v-row style="padding:0;">
+      <v-col cols="1">
+        <button @click="goBack">
+          <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
+        </button>
+      </v-col>
+      <v-col cols="10" class="d-flex justify-center align-center">
+        <h2>주문정보</h2>
+      </v-col>
+    </v-row>
 
+    <v-container class="centered-container">
         <!-- 폼 부분 -->
         <v-row class="form-row">
           <v-col cols="12" md="6">
@@ -42,7 +42,7 @@
                   readonly
                   class="date-input"
                 />
-                <p class="date-display">선택한 날짜: {{ formattedDeliveryDate }}</p>
+                <p class="date-display">발송예정 날짜: {{ formattedDeliveryDate }}</p>
               </div>
 
               <!-- 세탁 요청사항 -->
@@ -85,26 +85,24 @@
               </div>
             </div>
 
-
             <!-- 상자 부분 -->
-<div class="notice-box-wrapper">
-  <div class="notice-box">
-    <div class="notice-box-header">
-      <img src="/images/images/info.png" alt="Info Icon" class="notice-box-icon" />
-      <span class="notice-box-text">유의사항</span>
-    </div>
-    <div class="notice-box-detail">
-      <p class="notice-box-detail-text">
-        • 1회 최소 주문금액은 30,000원이에요. (픽업 택배비는 별도 결제)<br>
-        • 최소 주문금액 미달 시 기준가인 30,000원에서 쿠폰 등 할인이 적용돼요.
-      </p>
-    </div>
-  </div>
-</div>
-
+            <div class="notice-box-wrapper">
+              <div class="notice-box">
+                <div class="notice-box-header">
+                  <img src="/images/images/info.png" alt="Info Icon" class="notice-box-icon" />
+                  <span class="notice-box-text">유의사항</span>
+                </div>
+                <div class="notice-box-detail">
+                  <p class="notice-box-detail-text">
+                    • 1회 최소 주문금액은 30,000원이에요. (픽업 택배비는 별도 결제)<br>
+                    • 최소 주문금액 미달 시 기준가인 30,000원에서 쿠폰 등 할인이 적용돼요.
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <!-- 다음 버튼 -->
-            <v-btn @click="submit" class="submit-button mt-4">
+            <v-btn @click="submit" class="submit-button mt-4" >
               다음
             </v-btn>
           </v-col>
@@ -113,177 +111,91 @@
     </v-main>
   </v-app>
 </template>
+
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
   data() {
     return {
-      types: ['의류', '신발', '리빙', '가죽/모피', '잡화', '수선/기술'],
-      categories: ['셔츠/블라우스', '신발', '리빙', '악세서리'],
-      itemsByCategory: {
-        '셔츠/블라우스': [
-          { name: '셔츠/블라우스', price: 1900 },
-          { name: '슬림핏 와이셔츠/교복셔츠', price: 3000 },
-          { name: '남방/티셔츠', price: 4000 },
-          { name: '롱/빅 와이셔츠', price: 4000 },
-          { name: '롱/빅 남방/티셔츠', price: 5000 },
-          { name: '린넨/골덴/데님/면 셔츠', price: 7000 }
-        ],
-        '신발': [
-          { name: '운동화', price: 7000 },
-          { name: '발목 운동화', price: 8000 },
-          { name: '아동 운동화', price: 8000 },
-          { name: '슬리퍼', price: 7000 },
-          { name: '어그 슬리퍼', price: 12000 },
-          { name: '준 명품 운동화', price: 20000 }
-        ],
-        '리빙': [
-          { name: '이불', price: 10000 },
-          { name: '이불 커버', price: 12000 },
-          { name: '이불 커버 대형', price: 15000 },
-          { name: '요/매트', price: 15000 },
-          { name: '요/매트 대형', price: 20000 },
-          { name: '커튼', price: 10000 }
-        ],
-        '악세서리': [
-          { name: '벨트', price: 5000 },
-          { name: '모자', price: 5000 },
-          { name: '목도리', price: 5000 },
-          { name: '장갑', price: 5000 }
-        ]
-      },
-      selectedType: null,
-      selectedCategory: null,
-      selectedItem: null,
-      amount: null,
-      showTypeDropdown: false,
-      showCategoryDropdown: false,
-      showItemDropdown: false,
-      selectedItems: [],
-      totalAmount: 0,
-      termsChecked: false,
-      boxQuantity: 1,
-      pickupFee: 4900,
+      pickupDate: '',
+      deliveryDate: '',
+      cleaningRequest: '',
+      valid: false,
+      isChecked: false,  // 체크 상태를 저장하는 변수
+      isPickupDateSelected: false, // 수거 예정일 선택 여부
+      daysOfWeek: ["일", "월", "화", "수", "목", "금", "토"],
     };
   },
   computed: {
-    ...mapGetters(['fnGetUser']),
-    filteredItems() {
-      return this.itemsByCategory[this.selectedCategory] || [];
-    }
+    formattedPickupDate() {
+      return this.formatDate(this.pickupDate);
+    },
+    formattedDeliveryDate() {
+      return this.formatDate(this.deliveryDate);
+    },
   },
   methods: {
-    ...mapActions(['submitOrder']),
-    toggleDropdown(dropdownType) {
-      if (dropdownType === 'type') {
-        this.showTypeDropdown = !this.showTypeDropdown;
-        this.showCategoryDropdown = false;
-        this.showItemDropdown = false;
-      } else if (dropdownType === 'category') {
-        this.showCategoryDropdown = !this.showCategoryDropdown;
-        this.showTypeDropdown = false;
-        this.showItemDropdown = false;
-      } else if (dropdownType === 'item') {
-        this.showItemDropdown = !this.showItemDropdown;
-        this.showTypeDropdown = false;
-        this.showCategoryDropdown = false;
-      }
-    },
-    selectType(type) {
-      this.selectedType = type;
-      this.showTypeDropdown = false;
-    },
-    selectCategory(category) {
-      this.selectedCategory = category;
-      this.showCategoryDropdown = false;
-      this.selectedItem = null;
-    },
-    selectItem(item) {
-      this.selectedItem = item.name;
-      this.amount = item.price;
-      this.showItemDropdown = false;
-    },
-    submitForm() {
-      console.log('submitForm called');
-      if (this.selectedCategory && this.selectedItem) {
-        console.log('Form valid, submitting');
-        const item = this.itemsByCategory[this.selectedCategory].find(i => i.name === this.selectedItem);
-        if (item) {
-          console.log('Item found:', item);
-          const existingItemIndex = this.selectedItems.findIndex(i => i.name === item.name);
-          if (existingItemIndex > -1) {
-            this.selectedItems[existingItemIndex].quantity += 1;
-          } else {
-            this.selectedItems.push({ ...item, quantity: 1, category: this.selectedCategory });
-          }
-          this.updateAmount();
-          this.resetForm();
-          console.log('Item added to selection:', this.selectedItems);
-        }
-      } else {
-        console.log('Invalid form submission');
-      }
-    },
-    resetForm() {
-      this.selectedType = null;
-      this.selectedCategory = null;
-      this.selectedItem = null;
-      this.amount = null;
-      this.showTypeDropdown = false;
-      this.showCategoryDropdown = false;
-      this.showItemDropdown = false;
-    },
-    updateAmount() {
-      this.totalAmount = this.selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    },
-    changeQuantity(item, delta) {
-      const existingItem = this.selectedItems.find(i => i.name === item.name);
-      if (existingItem) {
-        existingItem.quantity += delta;
-        if (existingItem.quantity <= 0) {
-          this.removeItem(this.selectedItems.indexOf(existingItem));
-        } else {
-          this.updateAmount();
-        }
-      }
-    },
-    removeItem(index) {
-      this.selectedItems.splice(index, 1);
-      this.updateAmount();
-    },
-    goToNextPage() {
-      console.log('goToNextPage called');
-      if (this.termsChecked && this.totalAmount >= 30000) {
-        console.log('Navigating to /ordersuccess');
-        const orderData = {
-          type: this.selectedType,
-          category: this.selectedCategory,
-          item: this.selectedItem,
-          amount: this.totalAmount,
-          boxQuantity: this.boxQuantity,
-          pickupFee: this.pickupFee,
-          totalAmount: this.totalAmount + this.pickupFee
-        };
-        this.submitOrder(orderData);
-        this.$router.push('/ordersuccess');
-      } else {
-        console.log('Conditions not met for navigation');
-      }
-    },
     goBack() {
-      console.log('Navigating back to /pickupapply');
       this.$router.push('/pickupapply');
     },
-    changeBoxQuantity(delta) {
-      this.boxQuantity = Math.max(1, this.boxQuantity + delta);
-      this.pickupFee = this.boxQuantity * 4900;
+    submit() {
+      if (this.$refs.form.validate() && this.isPickupDateSelected) {
+        console.log('Form submitted:', {
+          pickupDate: this.pickupDate,
+          deliveryDate: this.deliveryDate,
+          cleaningRequest: this.cleaningRequest,
+          isChecked: this.isChecked,
+        });
+        this.$router.push('/payment'); // /payment 페이지로 이동
+      }
+    },
+    updatePickupDate() {
+      this.$refs.form.validate(); // 날짜 변경 시 폼 검증
+      this.isPickupDateSelected = !!this.pickupDate; // 수거 예정일이 선택되었는지 확인
+      if (this.pickupDate) {
+        this.deliveryDate = this.calculateDeliveryDate(this.pickupDate);
+      }
+    },
+    calculateDeliveryDate(pickupDate) {
+      const date = new Date(pickupDate);
+      date.setDate(date.getDate() + 5); // 수거 예정일로부터 5일 뒤
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+    formatDate(date) {
+      if (!date) return '';
+      const [year, month, day] = date.split('-');
+      const dateObject = new Date(year, month - 1, day);
+      const dayOfWeek = this.daysOfWeek[dateObject.getDay()];
+      return `${year}-${month}-${day} (${dayOfWeek})`;
+    },
+    toggleInfoBox() {
+      this.isChecked = !this.isChecked; // 체크 상태를 토글합니다
+      console.log('Info box button clicked. Checked:', this.isChecked);
     }
-  }
+  },
+  setup() {
+    const router = useRouter();
+    return { router };
+  },
 };
 </script>
 
 <style scoped>
+.material-symbols-outlined {
+  font-size: 80px;
+  color: #A1A8BD;
+  font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 24;
+}
+
+.v-icon {
+  color: #202020;
+}
+
+
 .centered-container {
   display: flex;
   flex-direction: column;
@@ -323,7 +235,7 @@ export default {
 .textarea-input {
   width: 100%;
   border: none; /* 전체 테두리 제거 */
-  border-bottom: 1px solid #E0E0E0; /* 하단 선 추가 */
+  border-bottom: 1px solid #E0E0E0; /* 하단 선 */
   background-color: transparent; /* 배경색 제거 */
   padding: 8px;
   box-sizing: border-box;
@@ -331,14 +243,14 @@ export default {
 
 .date-input:focus,
 .textarea-input:focus {
-  outline: none; /* 포커스 시 기본 아웃라인 제거 */
-  border-bottom: 1px solid #2196F3; /* 포커스 시 하단 선 색상 변경 */
+  outline: none; 
+  border-bottom: 1px solid #2196F3; 
 }
 
 .date-display {
   margin-top: 8px;
   font-size: 14px;
-  color: #333;
+  color: #2196F3;
 }
 
 .blue-text {
@@ -348,12 +260,12 @@ export default {
 
 /* 프리미엄 케어 */
 .info-box-wrapper {
-  margin-bottom: 16px; /* 다음 버튼과 상자 사이의 간격 */
+  margin-bottom: 16px; 
 }
 .info-box {
   display: flex;
-  flex-direction: column; /* 세로 방향으로 배치 */
-  align-items: center; /* 가로 중앙 정렬 */
+  flex-direction: column; 
+  align-items: center; 
   padding: 15px;
   border: 1px solid #64B5F6;
   border-radius: 10px;
@@ -361,13 +273,13 @@ export default {
 
 .info-box-header {
   display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
+  align-items: center; 
 }
 
 .info-box-icon {
   font-size: 24px;
   color: #64B5F6;
-  margin-right: 10px; /* 아이콘과 텍스트 간격 */
+  margin-right: 10px; 
 }
 
 .info-box-text {
@@ -381,8 +293,8 @@ export default {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #ffffff; /* 기본 배경색 */
-  border: 2px solid #64B5F6; /* 기본 테두리 색상 */
+  background: #ffffff; 
+  border: 2px solid #64B5F6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -391,14 +303,14 @@ export default {
 }
 
 .info-box-button.checked {
-  background: #2196F3; /* 체크된 상태에서 파란색으로 채워지기 */
-  border-color: #2196F3; /* 테두리 색상도 파란색으로 변경 */
+  background: #2196F3; 
+  border-color: #2196F3; 
 }
 
 .info-box-button .material-symbols-outlined {
   font-size: 18px;
-  color: #ffffff; /* 아이콘 색상 */
-  display: none; /* 아이콘 숨기기 */
+  color: #ffffff; 
+  display: none; 
 }
 
 .info-box-detail {
@@ -409,7 +321,7 @@ export default {
 .info-box-line {
   border: 0;
   border-top: 1px solid #E0E0E0;
-  margin: 10px 0; /* 선과 텍스트 간격 */
+  margin: 10px 0; 
 }
 
 .info-box-detail-text {
@@ -418,46 +330,44 @@ export default {
   text-align: left;
 }
 
-
 /* 유의사항 */
 .notice-box-wrapper {
-  margin-bottom: 16px; /* 폼과 상자 사이의 간격 */
+  margin-bottom: 16px; 
 }
 .notice-box {
   display: flex;
-  flex-direction: column; /* 세로 방향으로 배치 */
-  align-items: center; /* 가로 중앙 정렬 */
+  flex-direction: column; 
+  align-items: center; 
   padding: 15px;
   border-radius: 10px;
   background: #F4FAFE;
-  position: relative; /* 자식 요소의 절대 위치 지정을 위한 부모의 상대 위치 지정 */
+  position: relative; 
 }
 
 .notice-box-header {
   display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 수평 중앙 정렬 */
-  width: 100%; /* 전체 너비를 사용 */
+  align-items: center; 
+  justify-content: center; 
+  width: 100%; 
   position: relative;
 }
 
 .notice-box-icon {
-  position: absolute; /* 상자 왼쪽 상단에 위치 */
+  position: absolute; 
   left: -5px;
   top: 50%;
   transform: translateY(-50%);
-  width: 30px; /* 아이콘 크기 조정 */
-  height: 30px; /* 아이콘 크기 조정 */
+  width: 30px; 
+  height: 30px; 
 }
 
 .notice-box-text {
   font-size: 16px;
   color: #000000;
-  font-weight: bold; /* 텍스트 두껍게 */
-  text-align: center; /* 텍스트 가운데 정렬 */
+  font-weight: bold; 
+  text-align: center; 
   flex: 1; /* 텍스트가 중앙에 위치하도록 하기 */
 }
-
 
 .notice-box-detail {
   margin-top: 10px;
@@ -466,9 +376,8 @@ export default {
 .notice-box-detail-text {
   font-size: 13px;
   color: #798094;
-  line-height: 1.5; /* 줄 간격 조정 */
+  line-height: 1.5; 
 }
-
 
 .submit-button {
   width: 100%;
@@ -476,6 +385,7 @@ export default {
   color: #ffffff;
   border-radius: 10px;
   box-shadow: none;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 </style>
