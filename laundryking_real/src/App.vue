@@ -50,6 +50,21 @@
       <p style="color: #aeaeae; font-size: 13px;"class="mt-2">COPYRIGHT &copy; 2024&#46; All rights reserved&#46;</p>
     </div>
     </v-footer>
+
+    <v-dialog v-model="isOpen" max-width="400">
+      <v-card>
+        <v-card-title class="headline"><img src="/images/images/logo-light.png" alt="" width="90px"></v-card-title>
+
+        <v-card-text class="text-center mt-5">
+          <p>로그인 후 이용 가능한 서비스입니다.</p>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue" variant="outlined" @click="closeModal">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -73,11 +88,15 @@
 h1 {
   cursor: pointer;
 }
+.headline {
+  background: #2196F3;
+  height: 45px;
+}
 </style>
 
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter} from 'vue-router';
 
@@ -178,5 +197,7 @@ const fnDoLogout = () => {
 
 // 사용자 데이터 가져오기
 const user = computed(() => store.getters.fnGetUser);
+
+
 
 </script>

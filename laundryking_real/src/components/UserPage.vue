@@ -23,9 +23,8 @@
           />
           <!-- 조건부 렌더링을 통해 사용자 데이터가 있을 때만 표시 -->
           <h3 class="pt-2 mt-4 grey lighten-2" v-if="user">{{ user.name }} 님</h3>
-          <v-divider class="my-10"></v-divider>
-          <h4>이메일</h4>
           <p class="pb-2 grey lighten-2" v-if="user">{{ user.email }}</p>
+          <v-divider class="my-10"></v-divider>
           <p class="pb-2 grey lighten-2" v-if="user">{{ formattedPhoneNumber }}</p>
           <p class="pb-2 grey lighten-2" v-if="user">{{ user.adress }}</p>
           <p class="pb-2 grey lighten-2" v-if="user">{{ user.adressDetail }}</p>

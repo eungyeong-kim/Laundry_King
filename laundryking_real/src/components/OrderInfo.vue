@@ -22,13 +22,14 @@
               <!-- 수거예정일 -->
               <div class="form-field-wrapper">
                 <label for="pickupDate">수거예정일</label>
-                <input
-                  type="date"
-                  id="pickupDate"
+                <v-text-field
                   v-model="pickupDate"
+                  :rules="[v => !!v || '수거 예정일을 선택해주세요']"
+                  type="date"
                   @change="updatePickupDate"
-                  class="date-input"
-                />
+                  color="blue"
+                  variant="underlined"
+                ></v-text-field>
                 <p class="date-display">선택한 날짜: {{ formattedPickupDate }}</p>
               </div>
 
@@ -48,12 +49,15 @@
               <!-- 세탁 요청사항 -->
               <div class="form-field-wrapper">
                 <label for="cleaningRequest">세탁 요청사항</label>
-                <textarea
-                  id="cleaningRequest"
+                <v-textarea
                   v-model="cleaningRequest"
-                  placeholder="세탁 요청사항을 입력해주세요"
-                  class="textarea-input"
-                ></textarea>
+                  placeholder="세탁 요청사항을 입력해주세요(최대 50자)"
+                  variant="underlined"
+                  color="blue"
+                  rows="2"
+                  maxlength="50"
+                  auto-grow
+                ></v-textarea>
                 <p class="blue-text">적어주신 내용을 세탁물 검품시에 참고하겠습니다.</p>
               </div>
             </v-form>
@@ -114,6 +118,8 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import { mapMutations } from 'vuex';
+
 
 export default {
   data() {
@@ -136,18 +142,29 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(['setOrderInfo']),
     goBack() {
-      this.$router.push('/pickupapply');
+      this.router.push('/pickupapply');
     },
-    submit() {
-      if (this.$refs.form.validate() && this.isPickupDateSelected) {
-        console.log('Form submitted:', {
+    async submit() {
+      if (this.$refs.form.validate()) {
+        // Vuex에 주문 정보 저장
+        this.setOrderInfo({
           pickupDate: this.pickupDate,
           deliveryDate: this.deliveryDate,
           cleaningRequest: this.cleaningRequest,
           isChecked: this.isChecked,
         });
-        this.$router.push('/payment'); // /payment 페이지로 이동
+        try {
+          // 주문 정보 제출
+          await this.$store.dispatch('submitOrder');
+          this.router.push('/payment'); // /payment 페이지로 이동
+        } catch (error) {
+          console.error('Error submitting order:', error);
+          alert('주문 정보 제출 중 오류가 발생했습니다.');
+        }
+      } else {
+        console.log('Form validation failed or pickup date is not selected.');
       }
     },
     updatePickupDate() {

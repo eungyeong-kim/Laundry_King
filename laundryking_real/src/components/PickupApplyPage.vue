@@ -129,7 +129,7 @@ export default {
         try {
           // 주문 정보 제출
           await this.$store.dispatch('submitOrder');
-          this.$router.push('/payment'); // /payment 페이지로 이동
+          this.$router.push('/orderinfo'); // /payment 페이지로 이동
         } catch (error) {
           console.error('Error submitting order:', error);
           alert('주문 정보 제출 중 오류가 발생했습니다.');
