@@ -20,6 +20,9 @@ import UserHistoryPage from '@/components/UserHistoryPage.vue'
 import UserPage from '@/components/UserPage.vue'
 
 
+// 파이어베이스 앱 객체 모듈 가져오기
+import firebase from "firebase/compat/app"
+
 
 const routes = [
   {
@@ -116,6 +119,7 @@ const routes = [
     path: '/userhistory',
     name: 'userhistory',
     component: UserHistoryPage,
+    meta: { bAuth: true } // 인증이 필요한 페이지
   },
   {
     path: '/user',
@@ -135,5 +139,17 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+// 라우터 이동에 개입하여 인증이 필요한 경우 login 페이지로 전환
+router.beforeEach((to, from, next) => {
+  const bNeedAuth = to.matched.some(record => record.meta.bAuth)
+  const bCheckAuth = firebase.auth().currentUser
+  if (bNeedAuth && !bCheckAuth) {
+    alert('로그인이 필요한 페이지 입니다.')
+    next("/login")
+  } else {
+    next()
+  }
+}) 
 
 export default router
