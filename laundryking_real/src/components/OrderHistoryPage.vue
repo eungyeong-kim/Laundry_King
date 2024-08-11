@@ -32,7 +32,14 @@
 </template>
 
 <script>
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import { collection, query, where, getDocs } from "firebase/firestore";
+import db from '@/firebase';
+
     export default{
+        
         data(){
             return{
                 tab:null,
@@ -49,18 +56,6 @@
                     {status:"주문완료",
                     orderNumber:"주문번호 21081",
                     orderList:"블라우스 2개 외 3건",
-                    preDate: "7월 25일 목요일",
-                    deliver: "7월 30일 화요일",
-                    charge: "34,900원"},
-                    {status:"주문완료",
-                    orderNumber:"주문번호 21081",
-                    orderList:"와이셔츠 1개, 블라우스 2개 외 3건",
-                    preDate: "7월 25일 목요일",
-                    deliver: "7월 30일 화요일",
-                    charge: "34,900원"},
-                    {status:"주문완료",
-                    orderNumber:"주문번호 21081",
-                    orderList:"와이셔츠 1개, 블라우스 2개 외 3건",
                     preDate: "7월 25일 목요일",
                     deliver: "7월 30일 화요일",
                     charge: "34,900원"}
@@ -91,6 +86,29 @@
         },
         userHistory(){
             this.$router.push('/userhistory')
+        },
+        async fetchUserOrders() {
+        const auth = firebase.auth();
+        const user = auth.currentUser;
+
+        if (user) {
+            const userId = user.uid;  // 로그인된 사용자의 UID 가져오기
+            
+            // 하위 컬렉션 `additionalInfo`에서 주문 정보 가져오기
+            const additionalInfoRef = collection(db, `users/${userId}/additionalInfo`);
+            const querySnapshot = await getDocs(additionalInfoRef);
+            
+            const orders = [];
+            querySnapshot.forEach((doc) => {
+            orders.push({ id: doc.id, ...doc.data() });
+            });
+            
+            return orders;
+        }
+
+        // 주문 데이터를 현재 탭에 할당
+        this.tabs[0].orderListContent = orders.filter(order => order.status === "주문완료");
+        this.tabs[1].orderListContent = orders.filter(order => order.status === "지난 주문내역");
         }
     }
     }
