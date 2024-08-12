@@ -70,6 +70,9 @@ import db from '@/firebase';
     goBack() {
       this.$router.go(-1);
     },
+    goToOrderDetail(orderId) {
+      this.$router.push({ name: 'userhistory', params: { userId: userId } });
+    },
     selectTab(index) {
       this.selectedTab = index;
     },
@@ -77,32 +80,35 @@ import db from '@/firebase';
       this.$router.push('/userhistory');
     },
     async fetchUserOrders(userId) {
-      const orders = []; // orders 배열을 블록 바깥에 정의
+      const orders = [];
 
       // 하위 컬렉션 `additionalInfo`에서 주문 정보 가져오기
-      const additionalInfoRef = collection(db, `users/${userId}/additionalInfo`);
-      const querySnapshot = await getDocs(additionalInfoRef);
+      
+      const ordersRef = collection(db, `users/${userId}/orders`);
+      const querySnapshot = await getDocs(ordersRef);
 
       querySnapshot.forEach((doc) => {
-        orders.push({ id: doc.id, ...doc.data() });
-        
+        const orderData = { id: doc.id, ...doc.data() };
+        console.log('Order Data:', orderData); // 각 주문의 모든 데이터를 출력
+        orders.push(orderData);
       });
 
-      console.log('Fetched Orders:', orders); // 데이터를 콘솔에 출력
+      // 현재 주문 내역 필터링 (주문 완료 상태)
+      this.tabs[0].orderListContent = orders.filter(order => 
+        (order.orderStatus || "").trim().toLowerCase() !== "주문완료".toLowerCase()
+      );
+      // 지난 주문 내역 필터링 (배송 완료 상태)
+      this.tabs[1].orderListContent = orders.filter(order => 
+        (order.orderStatus || "").trim().toLowerCase() === "배송완료".toLowerCase()
+      );
 
-      if (orders.length > 0) {
-    // 현재 주문 내역 필터링 (주문 완료 상태)
-    this.tabs[0].orderListContent = orders.filter(order => order.orderStatus === "주문완료");
-    
-    // 지난 주문 내역 필터링 (배송 완료 상태)
-    this.tabs[1].orderListContent = orders.filter(order => order.orderStatus === "배송완료");
-
-    console.log('Current Orders:', this.tabs[0].orderListContent); // 현재 주문 내역 확인
-    console.log('Past Orders:', this.tabs[1].orderListContent); // 지난 주문 내역 확인
-  } else {
-    console.log("No orders found.");
-  }
-}
+      console.log('Current Orders:', this.tabs[0].orderListContent); // 현재 주문 내역 확인
+      console.log('Past Orders:', this.tabs[1].orderListContent); // 지난 주문 내역 확인
+   
+      console.log('Filtered Current Orders:', this.tabs[0].orderListContent);
+      console.log('Filtered Past Orders:', this.tabs[1].orderListContent);
+   
+    }
   },
   mounted() {
     firebase.auth().onAuthStateChanged(async (user) => {
