@@ -120,7 +120,8 @@ const routes = [
     path: '/userhistory/:orderId',
     name: 'userhistory',
     component: UserHistoryPage,
-    meta: { bAuth: true } // 인증이 필요한 페이지
+    meta: { bAuth: true }, // 인증이 필요한 페이지
+    props: true
   },
   {
     path: '/user',
