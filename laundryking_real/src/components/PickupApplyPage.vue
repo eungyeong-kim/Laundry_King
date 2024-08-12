@@ -1,20 +1,18 @@
 <template>
   <v-app>
     <v-main>
-      <!-- 헤더 부분 -->
       <v-row style="padding:0;">
-      <v-col cols="1">
-        <button @click="goBack">
-          <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
-        </button>
-      </v-col>
-      <v-col cols="10" class="d-flex justify-center align-center">
-        <h2>주문정보</h2>
-      </v-col>
-    </v-row>
+        <v-col cols="1">
+          <button @click="goBack">
+            <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
+          </button>
+        </v-col>
+        <v-col cols="10" class="d-flex justify-center align-center">
+          <h2>주문정보</h2>
+        </v-col>
+      </v-row>
 
       <v-container class="centered-container">
-        <!-- 폼 부분 -->
         <v-row class="form-row">
           <v-col cols="12" md="6">
             <v-form ref="form" v-model="valid" lazy-validation>
@@ -100,7 +98,7 @@ export default {
     return {
       name: '',
       address: '',
-      detailAddress: '',
+      detailAddress: '',  // 상세 주소
       phone: '',
       verificationCode: '',
       valid: false,
@@ -121,14 +119,14 @@ export default {
         this.setOrderInfo({
           name: this.name,
           address: this.address,
-          detailAddress: this.detailAddress,
+          detailAddress: this.detailAddress,  // 상세 주소 저장
           phone: this.phone,
           verificationCode: this.verificationCode,
         });
         try {
           // 주문 정보 제출
           await this.$store.dispatch('submitOrder');
-          this.$router.push('/orderinfo'); // /payment 페이지로 이동
+          this.$router.push('/orderinfo'); // /orderinfo 페이지로 이동
         } catch (error) {
           console.error('Error submitting order:', error);
           alert('주문 정보 제출 중 오류가 발생했습니다.');
@@ -170,10 +168,6 @@ export default {
       script.async = true;
       document.head.appendChild(script);
     }
-  },
-  setup() {
-    const router = useRouter();
-    return { router };
   },
 };
 </script>
