@@ -22,7 +22,7 @@
                         <p class="d-flex justify-space-between mr-5 ml-5"><span class="mt-1">{{orderListTitle}}</span> <span class="mt-1">{{ order.item }}</span></p>
                         <p class="d-flex justify-space-between mr-5 ml-5"><span>{{preDateTitle}}</span> <span>{{ order.pickupDate }}</span></p>
                         <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1">{{deliverTitle}}</span> <span>{{ order.deliveryDate }}</span></p>
-                        <p class="d-flex justify-space-between mr-5 ml-5 charge_font"><span class="mt-1">{{chargeTitle}}</span> <span class="mt-1 font-weight-bold">{{ order.totalAmount + " " +"원" }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5 charge_font"><span class="mt-1">{{chargeTitle}}</span> <span class="mt-1 font-weight-bold">{{ formatCurrency(order.totalAmount) + " " +"원" }}</span></p>
                     </div>
                 </v-tabs-window-item>
             </v-tabs-window>
@@ -35,9 +35,8 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { collection, getDocs } from "firebase/firestore";
-import db from '@/firebase';
-
+import { collection, getDocs, doc, query, orderBy } from "firebase/firestore"; // query와 orderBy 추가import db from '@/firebase';
+import db from '@/firebase'
     export default{
         
         data(){
@@ -70,7 +69,7 @@ import db from '@/firebase';
     goBack() {
       this.$router.go(-1);
     },
-    goToOrderDetail(orderId) {  // 이 메서드는 methods 안에 있어야 합니다.
+    goToOrderDetail(orderId) {  
       this.$router.push({ name: 'userhistory', params: { orderId: orderId } });
     },
     selectTab(index) {
@@ -79,13 +78,22 @@ import db from '@/firebase';
     userHistory() {
       this.$router.push('/userhistory');
     },
+    formatCurrency(amount) {
+      if (typeof amount !== "number") {
+        return amount;
+      }
+      return amount.toLocaleString('ko-KR'); // 'ko-KR'은 한국어 지역 설정입니다.
+    },
     async fetchUserOrders(userId) {
       const orders = [];
 
-      // 하위 컬렉션 `additionalInfo`에서 주문 정보 가져오기
+      // orders 컬렉션에서 주문 정보 가져오기
+      const ordersRef = collection(db, `users/${userId}/orders`);  // 원래대로 orders 컬렉션 참조
       
-      const ordersRef = collection(db, `users/${userId}/orders`);
-      const querySnapshot = await getDocs(ordersRef);
+      // 타임스탬프를 기준으로 내림차순 정렬하여 최신 주문이 가장 먼저 오도록
+      const q = query(ordersRef, orderBy("createdAt", "desc"));
+      
+      const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
         const orderData = { id: doc.id, ...doc.data() };
@@ -104,10 +112,6 @@ import db from '@/firebase';
 
       console.log('Current Orders:', this.tabs[0].orderListContent); // 현재 주문 내역 확인
       console.log('Past Orders:', this.tabs[1].orderListContent); // 지난 주문 내역 확인
-   
-      console.log('Filtered Current Orders:', this.tabs[0].orderListContent);
-      console.log('Filtered Past Orders:', this.tabs[1].orderListContent);
-   
     }
   },
   mounted() {

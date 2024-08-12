@@ -36,6 +36,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import db from '@/firebase';
+
 export default {
   props: {
     orderId: {
@@ -50,26 +51,42 @@ export default {
       error: null         // 오류 발생 시 메시지 저장
     };
   },
+  methods:{
+    goBack() {
+      this.$router.go(-1);
+    },
+    
+  },
   async created() {
     try {
-      const userId = firebase.auth().currentUser.uid;  // 현재 로그인한 사용자의 ID 가져오기
-      const orderRef = db.collection('users').doc(userId).collection('orders').doc(this.orderId);
-      const orderSnapshot = await orderRef.get();
+        const user = firebase.auth().currentUser;
+        if (!user) {
+            throw new Error("User is not logged in");
+        }
 
-      if (orderSnapshot.exists) {
-        this.orderDetail = orderSnapshot.data();  // 가져온 데이터로 상태 업데이트
-        console.log('Order Detail:', this.orderDetail);  // 가져온 데이터 콘솔에 출력
-      } else {
-        console.error("Order not found");
-        this.error = "Order not found";  // 오류 메시지 설정
-      }
+        const userId = user.uid;
+        console.log('User ID:', userId);  // 확인을 위한 로그
+        console.log('Order ID:', this.orderId);  // 확인을 위한 로그
+
+        const orderRef = db.collection('users').doc(userId).collection('orders').doc(this.orderId);
+
+        const orderSnapshot = await orderRef.get();
+
+        if (orderSnapshot.exists) {
+            this.orderDetail = orderSnapshot.data();  // 가져온 데이터로 상태 업데이트
+            console.log('Order Detail:', this.orderDetail);  // 가져온 데이터 콘솔에 출력
+        } else {
+            console.error("Order not found");
+            this.error = "Order not found";  // 오류 메시지 설정
+        }
     } catch (err) {
-      console.error("Error fetching order:", err);
-      this.error = "Failed to fetch order data.";  // 오류 메시지 설정
+        console.error("Error fetching order:", err);
+        this.error = "Failed to fetch order data.";  // 오류 메시지 설정
     } finally {
-      this.loading = false;  // 로딩 완료
+        this.loading = false;  // 로딩 완료
     }
-  }
+}
+  
 };
 </script>
 
