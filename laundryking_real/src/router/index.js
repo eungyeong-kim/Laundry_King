@@ -19,7 +19,7 @@ import QnaPage from '@/components/QnaPage.vue'
 import UserHistoryPage from '@/components/UserHistoryPage.vue'
 import UserPage from '@/components/UserPage.vue'
 
-
+import store from '@/store';  // Vuex 스토어 import
 // 파이어베이스 앱 객체 모듈 가져오기
 import firebase from "firebase/compat/app"
 
@@ -84,6 +84,7 @@ const routes = [
     path: '/orderhistory',
     name: 'orderhistory',
     component: OrderHistoryPage,
+    meta: { bAuth: true } // 인증이 필요한 페이지
   },
   {
     path: '/orderinfo',
@@ -145,7 +146,7 @@ router.beforeEach((to, from, next) => {
   const bNeedAuth = to.matched.some(record => record.meta.bAuth)
   const bCheckAuth = firebase.auth().currentUser
   if (bNeedAuth && !bCheckAuth) {
-    alert('로그인이 필요한 페이지 입니다.')
+    store.dispatch('modal/openModal', '로그인 후 이용 가능한 페이지입니다.');  // 모달 열기
     next("/login")
   } else {
     next()
