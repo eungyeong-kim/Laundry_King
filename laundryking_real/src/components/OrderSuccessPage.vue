@@ -2,13 +2,11 @@
   <v-app>
     <v-main>
       <v-row style="padding:0;" class="mt-4">
-      <v-col cols="1">
-        
-      </v-col>
-      <v-col cols="10" class="d-flex justify-center align-center">
-        <h2>주문완료</h2>
-      </v-col>
-</v-row>
+        <v-col cols="1"></v-col>
+        <v-col cols="10" class="d-flex justify-center align-center">
+          <h2>주문완료</h2>
+        </v-col>
+      </v-row>
 
       <v-container class="centered-container">
         <div class="order-message">
@@ -18,13 +16,10 @@
         <hr class="divider" />
         <div class="order-details-box">
           <div class="detail-row">
-            <span class="detail-label">주문 번호:</span>
-            <span class="detail-value">{{ orderDetails.orderNumber }}</span>
-          </div>
-          <hr class="sub-divider" />
-          <div class="detail-row">
             <span class="detail-label">주문 내용:</span>
-            <span class="detail-value">{{ orderDetails.item }}</span>
+            <span class="detail-value">
+              {{ orderDetails.type }} - {{ orderDetails.category }} - {{ orderDetails.item }}
+            </span>
           </div>
           <div class="detail-row">
             <span class="detail-label">수거 예정일:</span>
@@ -50,7 +45,7 @@
           <hr class="sub-divider" />
           <div class="detail-row payment-details">
             <span class="detail-label">결제 금액:</span>
-            <span class="detail-value">{{ orderDetails.amount }} 원</span>
+            <span class="detail-value">{{ orderDetails.totalAmount.toLocaleString() }} 원</span>
           </div>
         </div>
 
@@ -80,59 +75,26 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default {
-  data() {
-    return {
-      orderDetails: {
-        orderNumber: '', // 주문 번호
-        item: '', // 주문 내용
-        pickupDate: '', // 수거 예정일
-        deliveryDate: '', // 배송 예정일
-        recipient: '', // 수령인
-        phone: '', // 휴대폰
-        address: '', // 주소지
-        amount: '', // 결제 금액
-      },
-    };
-  },
   setup() {
     const router = useRouter();
+    const store = useStore();
 
-    function goBack() {
-      router.push('/orderinfo'); // goBack 메서드를 /orderinfo로 이동하게 설정
-    }
-
-    function fetchOrderDetails() {
-      // 서버에서 데이터 가져오기 (예시)
-      // 실제 서버에서 데이터를 불러오는 로직을 여기에 추가합니다.
-
-      // 임시 데이터
-      this.orderDetails = {
-        orderNumber: '123456',
-        item: '상품 A',
-        pickupDate: '2024-08-15',
-        deliveryDate: '2024-08-17',
-        recipient: '홍길동',
-        phone: '010-1234-5678',
-        address: '서울시 강남구 테헤란로 123',
-        amount: '50,000',
-      };
-    }
+    // Vuex에서 orderDetails를 가져옵니다
+    const orderDetails = store.getters.fnGetOrderInfo;
 
     function goToOrderHistory() {
-      router.push('/orderhistory');
+      router.push('/orderhistory'); // 주문상세보기 버튼 클릭 시 /orderhistory로 이동
     }
 
     function goToHome() {
-      router.push('/main');
+      router.push('/main'); // 홈으로 버튼 클릭 시 /main으로 이동
     }
 
-    return { goBack, fetchOrderDetails, goToOrderHistory, goToHome };
-  },
-  mounted() {
-    this.fetchOrderDetails(); // 컴포넌트가 마운트될 때 데이터 로드
-  },
+    return { orderDetails, goToOrderHistory, goToHome };
+  }
 };
 </script>
 
@@ -146,7 +108,6 @@ export default {
 .v-icon {
   color: #202020;
 }
-
 
 .centered-container {
   max-width: 900px;
