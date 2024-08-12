@@ -6,12 +6,12 @@
     location="right"
     >
       <v-list>
-        <v-list-item title="MENU" class="text-center"></v-list-item>
+        <v-list-item :title="user.value?.name || 'User'" class="text-center"></v-list-item>
         <v-divider></v-divider>
 
         <v-list-item v-for="(item, i) in fnGetMenuItems" :to="item.to" :key="i">
           <v-list-item-content>
-            <v-list-item-title class="d-flex align-cneter">
+            <v-list-item-title class="d-flex align-center">
               <v-icon class="mr-4" color="blue"><span class="material-symbols-outlined">{{ item.icon }}</span></v-icon>
               {{ item.title }}
             </v-list-item-title>
@@ -180,7 +180,7 @@ const fnGetMenuItems = computed(() => {
       },
       {
         title: '이용내역',
-        to: '/userhistory',
+        to: '/orderhistory',
         icon: 'receipt_long',
       },
     ];
@@ -196,7 +196,7 @@ const fnDoLogout = () => {
 
 
 // 사용자 데이터 가져오기
-const user = computed(() => store.getters.fnGetUser);
+const user = computed(() => store.getters.fnGetUser || {});
 
 
 const isModalOpen = computed(() => store.getters['modal/isModalOpen']);
