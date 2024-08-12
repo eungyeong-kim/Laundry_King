@@ -93,20 +93,29 @@ export default {
     //구글 로그인
     fnDoGoogleLogin_Popup({ commit }) {
       commit("fnSetLoading", true); // 로딩 상태로 변경
-
+    
       var oProvider = new firebase.auth.GoogleAuthProvider();
       oProvider.addScope("profile");
       oProvider.addScope("email");
+    
       firebase
         .auth()
         .signInWithPopup(oProvider)
-        .then((pUserInfo) => {
-          commit("fnSetUser", {
-            id: pUserInfo.user.uid,
-            name: pUserInfo.user.displayName,
-            email: pUserInfo.user.email,
-            photoURL: pUserInfo.user.photoURL,
-          });
+        .then(async (pUserInfo) => {
+          // Firestore에 사용자 정보 저장
+          const user = pUserInfo.user;
+          const userData = {
+            id: user.uid,
+            name: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+          };
+    
+          // Firestore에 저장
+          await db.collection("users").doc(user.uid).set(userData, { merge: true });
+    
+          // 스토어에 사용자 정보 저장
+          commit("fnSetUser", userData);
           commit("fnSetLoading", false); // 로딩 완료
           commit("fnSetErrorMessage", "");
           router.push("/main");
