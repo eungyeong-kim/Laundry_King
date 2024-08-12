@@ -104,6 +104,7 @@ export default {
       verificationCode: '',
       valid: false,
       sentCode: '', // 서버로부터 받은 인증번호
+      orderStatus: '주문완료'
     };
   },
   computed: {
@@ -123,6 +124,7 @@ export default {
           detailAddress: this.detailAddress,  // 상세 주소 저장
           phone: this.phone,
           verificationCode: this.verificationCode,
+          orderStatus: this.orderStatus
         });
         try {
           // 주문 정보 제출
