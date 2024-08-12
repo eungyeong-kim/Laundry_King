@@ -92,6 +92,7 @@
 <script>
 import { useRouter } from 'vue-router';
 import { mapState, mapMutations } from 'vuex';
+import store from '@/store';  // Vuex 스토어 import
 
 export default {
   data() {
@@ -155,7 +156,7 @@ export default {
     },
     verifyCode() {
       // 인증번호를 검증하지 않고, `valid`를 true로 설정하여 폼 제출을 가능하게 합니다.
-      alert('인증 완료되었습니다.');
+      store.dispatch('modal/openModal', '인증완료.');
       this.valid = true; // 인증번호 검증 없이 `valid`를 true로 설정하여 폼을 제출 가능하게 함
     },
   },
