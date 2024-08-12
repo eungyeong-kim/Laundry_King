@@ -24,10 +24,29 @@
           <!-- 조건부 렌더링을 통해 사용자 데이터가 있을 때만 표시 -->
           <h3 class="pt-2 mt-4 grey lighten-2" v-if="user">{{ user.name }} 님</h3>
           <p class="pb-2 grey lighten-2" v-if="user">{{ user.email }}</p>
+          <div class="d-flex align-center flex-column pa-6">
+            <v-btn-toggle
+              variant="outlined"
+              divided
+            >
+              <v-btn></v-btn>
+              <v-btn></v-btn>
+              <v-btn></v-btn>
+            </v-btn-toggle>
+          </div>
           <v-divider class="my-10"></v-divider>
-          <p class="pb-2 grey lighten-2" v-if="user">{{ formattedPhoneNumber }}</p>
-          <p class="pb-2 grey lighten-2" v-if="user">{{ user.adress }}</p>
-          <p class="pb-2 grey lighten-2" v-if="user">{{ user.adressDetail }}</p>
+          <v-card variant="outlined" color="blue">
+            <v-card-subtitle class="my-3">내 정보</v-card-subtitle>
+            <v-divider></v-divider>
+            <v-card-text class="py-5">
+              <p class="pb-2 grey lighten-2" v-if="user">{{ formattedBirth }}</p>
+              <p class="pb-2 grey lighten-2" v-if="user">{{ formattedPhoneNumber }}</p>
+              <p class="pb-2 grey lighten-2" v-if="user">{{ user.adress + ' ' + user.adressDetail }}</p>
+            </v-card-text>
+            
+          </v-card>
+          
+          
         </v-col>
       </v-row>
       <v-row class="d-flex justify-center mt-15">
@@ -69,6 +88,11 @@
     return user.value.phone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
   });
 
+    // 생년월일 포맷팅 computed 속성
+    const formattedBirth = computed(() => {
+    if (!user.value?.birth) return '';
+    return user.value.birth.replace(/(\d{2})(\d{2})(\d{2})/, '$1년$2월$3일');
+  });
 
   const defaultAvatar = '/images/images/defaultAvatar.png' // 기본 이미지 URL
 </script>

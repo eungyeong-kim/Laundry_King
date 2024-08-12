@@ -56,7 +56,7 @@
         <v-card-title class="headline"><img src="/images/images/logo-light.png" alt="" width="90px"></v-card-title>
 
         <v-card-text class="text-center mt-5">
-          <p>로그인 후 이용 가능한 서비스입니다.</p>
+          <p>{{ modalMessage }}</p>
         </v-card-text>
 
         <v-card-actions>
