@@ -207,11 +207,11 @@ export default {
     totalAmount() {
       return this.selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
     },
-    finalPaymentAmount() {
-      return this.totalAmount + this.pickupFee;
-    },
     pickupFee() {
       return this.boxQuantity * this.pickupFeePerBox;
+    },
+    finalPaymentAmount() {
+      return this.totalAmount + this.pickupFee;
     },
     canApplyOrder() {
       return this.finalPaymentAmount >= 30000;
@@ -312,6 +312,7 @@ export default {
   },
 };
 </script>
+
 
 
 
