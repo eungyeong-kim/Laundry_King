@@ -14,9 +14,9 @@
                 </v-tab>
             </v-tabs>
             <v-tabs-window v-model="tab">
-                <v-tabs-window-item v-for="(tabList,index) in tabs" :key="index" @click="userHistory">
+                <v-tabs-window-item v-for="(tabList,index) in tabs" :key="index">
                     <p class="text-center mb-10 mt-10 notice" >{{ tabList.notice }}</p>
-                    <div class="listItem mb-3" v-for="(order,index) in tabList.orderListContent" :key="index">
+                    <div class="listItem mb-3" v-for="(order,index) in tabList.orderListContent" :key="order.id" @click="goToOrderDetail(order.id)">
                         
                         <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1 status_style">{{ order.orderStatus }}</span><span class="mb-1">{{ order.orderNumber }}</span></p>
                         <p class="d-flex justify-space-between mr-5 ml-5"><span class="mt-1">{{orderListTitle}}</span> <span class="mt-1">{{ order.item }}</span></p>
@@ -70,8 +70,8 @@ import db from '@/firebase';
     goBack() {
       this.$router.go(-1);
     },
-    goToOrderDetail(orderId) {
-      this.$router.push({ name: 'userhistory', params: { userId: userId } });
+    goToOrderDetail(orderId) {  // 이 메서드는 methods 안에 있어야 합니다.
+      this.$router.push({ name: 'userhistory', params: { orderId: orderId } });
     },
     selectTab(index) {
       this.selectedTab = index;
