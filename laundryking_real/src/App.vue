@@ -51,7 +51,7 @@
     </div>
     </v-footer>
 
-    <v-dialog v-model="isOpen" max-width="400">
+    <v-dialog v-model="isModalOpen" max-width="400">
       <v-card>
         <v-card-title class="headline"><img src="/images/images/logo-light.png" alt="" width="90px"></v-card-title>
 
@@ -198,6 +198,13 @@ const fnDoLogout = () => {
 // 사용자 데이터 가져오기
 const user = computed(() => store.getters.fnGetUser);
 
+
+const isModalOpen = computed(() => store.getters['modal/isModalOpen']);
+const modalMessage = computed(() => store.getters['modal/modalMessage']);
+
+const closeModal = () => {
+  store.dispatch('modal/closeModal');
+};
 
 
 </script>
