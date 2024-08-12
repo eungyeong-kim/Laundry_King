@@ -142,15 +142,34 @@ const router = createRouter({
 })
 
 // 라우터 이동에 개입하여 인증이 필요한 경우 login 페이지로 전환
-router.beforeEach((to, from, next) => {
-  const bNeedAuth = to.matched.some(record => record.meta.bAuth)
-  const bCheckAuth = firebase.auth().currentUser
-  if (bNeedAuth && !bCheckAuth) {
-    store.dispatch('modal/openModal', '로그인 후 이용 가능한 페이지입니다.');  // 모달 열기
-    next("/login")
+router.beforeEach(async (to, from, next) => {
+  const bNeedAuth = to.matched.some(record => record.meta.bAuth);
+
+  if (bNeedAuth) {
+    try {
+      const user = await new Promise((resolve, reject) => {
+        const unsubscribe = firebase.auth().onAuthStateChanged(
+          user => {
+            unsubscribe(); // 리스너 해제
+            resolve(user);
+          },
+          error => reject(error)
+        );
+      });
+
+      if (user) {
+        next(); // 인증된 상태라면 이동 허용
+      } else {
+        store.dispatch('modal/openModal', '로그인 후 이용 가능한 페이지입니다.');
+        next('/login'); // 인증되지 않았다면 로그인 페이지로 이동
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      next('/login');
+    }
   } else {
-    next()
+    next(); // 인증이 필요 없는 페이지는 바로 이동
   }
-}) 
+});
 
 export default router

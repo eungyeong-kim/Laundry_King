@@ -170,13 +170,16 @@
     </v-main>
 </template>
 
-<script>
-    export default{
-        methods:{
-            goBack(){
-            this.$router.go(-1);
-        }}
-    }
+<script setup>
+import { useRouter} from 'vue-router';
+
+const router = useRouter();
+
+const goBack = () => {
+ router.push('/');
+};
+
+
 </script>
 
 <style scoped>
