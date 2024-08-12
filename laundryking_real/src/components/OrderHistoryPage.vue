@@ -18,11 +18,11 @@
                     <p class="text-center mb-10 mt-10 notice" >{{ tabList.notice }}</p>
                     <div class="listItem mb-3" v-for="(order,index) in tabList.orderListContent" :key="index">
                         
-                        <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1 status_style">{{ order.status }}</span><span class="mb-1">{{ order.orderNumber }}</span></p>
-                        <p class="d-flex justify-space-between mr-5 ml-5"><span class="mt-1">{{orderListTitle}}</span> <span class="mt-1">{{ order.orderList }}</span></p>
-                        <p class="d-flex justify-space-between mr-5 ml-5"><span>{{preDateTitle}}</span> <span>{{ order.preDate }}</span></p>
-                        <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1">{{deliverTitle}}</span> <span>{{ order.deliver }}</span></p>
-                        <p class="d-flex justify-space-between mr-5 ml-5 charge_font"><span class="mt-1">{{chargeTitle}}</span> <span class="mt-1 font-weight-bold">{{ order.charge }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1 status_style">{{ order.orderStatus }}</span><span class="mb-1">{{ order.orderNumber }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5"><span class="mt-1">{{orderListTitle}}</span> <span class="mt-1">{{ order.item }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5"><span>{{preDateTitle}}</span> <span>{{ order.pickupDate }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5 orderStatus"><span class="mb-1">{{deliverTitle}}</span> <span>{{ order.deliveryDate }}</span></p>
+                        <p class="d-flex justify-space-between mr-5 ml-5 charge_font"><span class="mt-1">{{chargeTitle}}</span> <span class="mt-1 font-weight-bold">{{ order.totalAmount + " " +"원" }}</span></p>
                     </div>
                 </v-tabs-window-item>
             </v-tabs-window>
@@ -35,7 +35,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import db from '@/firebase';
 
     export default{
@@ -52,66 +52,69 @@ import db from '@/firebase';
                     {
                     listName:"현재 주문내역",
                     notice:"세탁왕에서 주문하신 내역을 확인할 수 있어요.",
-                    orderListContent:[
-                    {status:"주문완료",
+                    orderStatus:"주문완료",
                     orderNumber:"주문번호 21081",
-                    orderList:"블라우스 2개 외 3건",
-                    preDate: "7월 25일 목요일",
-                    deliver: "7월 30일 화요일",
-                    charge: "34,900원"}
-                ]
+                    orderListContent:[]
                 },
                     {listName: "지난 주문내역",
                     notice:"지난 주문 내역을 확인할 수 있어요.",
-                    status:"주문완료",
+                    orderStatus:"배송완료",
                     orderNumber:"주문번호 21081",
-                    orderListContent:[
-                    {status:"주문완료",
-                    orderNumber:"주문번호 21081",
-                    orderList:"와이셔츠 1개, 블라우스 2개 외 3건",
-                    preDate: "7월 25일 목요일",
-                    deliver: "7월 30일 화요일",
-                    charge: "34,900원"}]
+                    orderListContent:[]
                     
                     }
                 ]
             }
         },
-        methods:{
-        goBack(){
-        this.$router.go(-1);
-        },
-        selectTab(index){
-            this.selectedTab = index
-        },
-        userHistory(){
-            this.$router.push('/userhistory')
-        },
-        async fetchUserOrders() {
-        const auth = firebase.auth();
-        const user = auth.currentUser;
+        methods: {
+    goBack() {
+      this.$router.go(-1);
+    },
+    selectTab(index) {
+      this.selectedTab = index;
+    },
+    userHistory() {
+      this.$router.push('/userhistory');
+    },
+    async fetchUserOrders(userId) {
+      const orders = []; // orders 배열을 블록 바깥에 정의
 
-        if (user) {
-            const userId = user.uid;  // 로그인된 사용자의 UID 가져오기
-            
-            // 하위 컬렉션 `additionalInfo`에서 주문 정보 가져오기
-            const additionalInfoRef = collection(db, `users/${userId}/additionalInfo`);
-            const querySnapshot = await getDocs(additionalInfoRef);
-            
-            const orders = [];
-            querySnapshot.forEach((doc) => {
-            orders.push({ id: doc.id, ...doc.data() });
-            });
-            
-            return orders;
-        }
+      // 하위 컬렉션 `additionalInfo`에서 주문 정보 가져오기
+      const additionalInfoRef = collection(db, `users/${userId}/additionalInfo`);
+      const querySnapshot = await getDocs(additionalInfoRef);
 
-        // 주문 데이터를 현재 탭에 할당
-        this.tabs[0].orderListContent = orders.filter(order => order.status === "주문완료");
-        this.tabs[1].orderListContent = orders.filter(order => order.status === "지난 주문내역");
-        }
-    }
-    }
+      querySnapshot.forEach((doc) => {
+        orders.push({ id: doc.id, ...doc.data() });
+        
+      });
+
+      console.log('Fetched Orders:', orders); // 데이터를 콘솔에 출력
+
+      if (orders.length > 0) {
+    // 현재 주문 내역 필터링 (주문 완료 상태)
+    this.tabs[0].orderListContent = orders.filter(order => order.orderStatus === "주문완료");
+    
+    // 지난 주문 내역 필터링 (배송 완료 상태)
+    this.tabs[1].orderListContent = orders.filter(order => order.orderStatus === "배송완료");
+
+    console.log('Current Orders:', this.tabs[0].orderListContent); // 현재 주문 내역 확인
+    console.log('Past Orders:', this.tabs[1].orderListContent); // 지난 주문 내역 확인
+  } else {
+    console.log("No orders found.");
+  }
+}
+  },
+  mounted() {
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        const userId = user.uid;
+        await this.fetchUserOrders(userId);
+      } else {
+        console.log("User is not logged in.");
+      }
+    });
+  }
+};
 </script>
 
 <style scoped>
