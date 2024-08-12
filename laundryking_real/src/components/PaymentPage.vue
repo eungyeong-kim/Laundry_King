@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- 상단 바와 선택 메뉴 -->
     <v-row style="padding:0;">
       <v-col cols="1">
         <button @click="goBack">
@@ -11,6 +12,7 @@
       </v-col>
     </v-row>
 
+    <!-- 폼과 선택 목록 -->
     <div class="form-container">
       <div class="form-row">
         <!-- 종류 추가 -->
@@ -55,6 +57,7 @@
           </div>
         </div>
 
+        <!-- 품목 선택 -->
         <div class="form-group">
           <label for="item">품목</label>
           <div class="custom-select">
@@ -79,6 +82,7 @@
           </div>
         </div>
 
+        <!-- 금액 입력 -->
         <div class="form-group">
           <label for="amount">금액</label>
           <input
@@ -91,6 +95,7 @@
         </div>
       </div>
 
+      <!-- 추가하기 버튼 -->
       <div class="button-group">
         <button @click="addItemToSelection" :disabled="!selectedCategory || !selectedItem">
           추가하기
@@ -98,7 +103,7 @@
       </div>
     </div>
 
-    <!-- 선택 목록 박스 추가 -->
+    <!-- 선택 목록 박스 -->
     <div class="selection-box" v-if="selectedItems.length">
       <h3>선택목록</h3>
       <p>(최소주문 금액은 30,000원 입니다.)</p>
@@ -146,7 +151,6 @@
             type="number"
             id="box-quantity"
             v-model.number="boxQuantity"
-            @input="updateTotalAmount"
             min="1"
             class="box-input"
           />
@@ -162,9 +166,9 @@
       </div>
     </div>
 
-    <!-- 신청하기 버튼 추가 -->
+    <!-- 신청하기 버튼 -->
     <div class="apply-button-container">
-      <button @click="applyOrder" :disabled="!selectedItems.length">신청하기</button>
+      <button @click="applyOrder" :disabled="!selectedItems.length || isSubmitting">신청하기</button>
     </div>
   </div>
 </template>
@@ -182,16 +186,17 @@ export default {
       selectedCategory: '',
       selectedItem: null,
       amount: 0,
-      types: ['Type1', 'Type2', 'Type3'], // 예시 데이터
-      categories: ['Category1', 'Category2', 'Category3'], // 예시 데이터
+      types: ['의류', '신발', '리빙'],
+      categories: ['블라우스', '운동화', '이불'],
       itemsByCategory: {
-        Category1: [{ name: 'Item1', price: 1000 }, { name: 'Item2', price: 2000 }],
-        Category2: [{ name: 'Item3', price: 3000 }, { name: 'Item4', price: 4000 }],
-        Category3: [{ name: 'Item5', price: 5000 }, { name: 'Item6', price: 6000 }],
+        블라우스: [{ name: '와이셔츠', price: 3000 }, { name: '후드티', price: 7000 }],
+        운동화: [{ name: '슬리퍼', price: 8000 }, { name: '구두', price: 12000 }],
+        이불: [{ name: '홑 이불', price: 10000 }, { name: '담요', price: 12000 }],
       },
       selectedItems: [],
       boxQuantity: 1,
-      pickupFeePerBox: 4900, // 박스당 픽업비
+      pickupFeePerBox: 4900,
+      isSubmitting: false, // Prevent multiple submissions
     };
   },
   computed: {
@@ -206,7 +211,7 @@ export default {
       return this.totalAmount + this.pickupFee;
     },
     pickupFee() {
-      return this.boxQuantity * this.pickupFeePerBox; // 박스 개수에 따른 픽업비
+      return this.boxQuantity * this.pickupFeePerBox;
     },
     canApplyOrder() {
       return this.finalPaymentAmount >= 30000;
@@ -233,8 +238,8 @@ export default {
       this.selectedCategory = category;
       this.showCategoryDropdown = false;
       this.setOrderInfo({ category });
-      this.selectedItem = null; // 품목 초기화
-      this.amount = 0; // 금액 초기화
+      this.selectedItem = null;
+      this.amount = 0;
     },
     selectItem(item) {
       this.selectedItem = item;
@@ -269,37 +274,46 @@ export default {
       this.selectedItems.splice(index, 1);
     },
     changeBoxQuantity(amount) {
-      this.boxQuantity += amount;
-      if (this.boxQuantity < 1) {
-        this.boxQuantity = 1;
-      }
-      this.updateTotalAmount();
+      this.boxQuantity = Math.max(1, this.boxQuantity + amount);
     },
-    updateTotalAmount() {
-      // Update the total amount when the box quantity changes
-      this.finalPaymentAmount; // This will trigger a recompute of the total payment amount
-    },
-    applyOrder() {
-      if (this.canApplyOrder) {
-        // Order submission logic
-        this.submitOrder()
-          .then(() => {
-            alert("신청이 완료되었습니다!");
-            this.$router.push('/ordersuccess'); // 페이지 이동
-          })
-          .catch((error) => {
-            console.error('주문 제출 실패:', error);
-          });
-      } else {
+    async applyOrder() {
+      if (!this.canApplyOrder) {
         alert("최소 주문 금액은 30,000원 입니다.");
+        return;
+      }
+      
+      if (this.isSubmitting) {
+        return; // Prevent multiple submissions
+      }
+      
+      this.isSubmitting = true; // Set submitting state
+      const orderData = {
+        totalAmount: this.totalAmount,
+        pickupFee: this.pickupFee,
+        finalPaymentAmount: this.finalPaymentAmount,
+        boxQuantity: this.boxQuantity,
+        items: this.selectedItems
+      };
+      console.log('Applying order with:', orderData); // 디버깅용 로그
+      try {
+        await this.submitOrder(orderData);
+        alert("신청이 완료되었습니다!");
+        this.$router.push('/ordersuccess');
+      } catch (error) {
+        console.error('주문 제출 실패:', error);
+        alert("주문 제출에 실패했습니다. 다시 시도해 주세요.");
+      } finally {
+        this.isSubmitting = false; // Reset submitting state
       }
     },
     goBack() {
-      this.$router.go(-1); // 뒤로가기
+      this.$router.go(-1);
     }
   },
 };
 </script>
+
+
 
 
 <style scoped>

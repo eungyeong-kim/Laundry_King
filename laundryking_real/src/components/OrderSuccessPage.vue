@@ -40,7 +40,9 @@
           </div>
           <div class="detail-row">
             <span class="detail-label">주소지:</span>
-            <span class="detail-value">{{ orderDetails.address }}</span>
+            <span class="detail-value">
+              {{ orderDetails.address }} {{ orderDetails.detailAddress }}
+            </span>
           </div>
           <hr class="sub-divider" />
           <div class="detail-row payment-details">
@@ -76,6 +78,7 @@
 <script>
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
   setup() {
@@ -83,7 +86,7 @@ export default {
     const store = useStore();
 
     // Vuex에서 orderDetails를 가져옵니다
-    const orderDetails = store.getters.fnGetOrderInfo;
+    const orderDetails = computed(() => store.getters.fnGetOrderInfo);
 
     function goToOrderHistory() {
       router.push('/orderhistory'); // 주문상세보기 버튼 클릭 시 /orderhistory로 이동
