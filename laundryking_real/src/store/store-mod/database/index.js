@@ -1,4 +1,3 @@
-// src/store/index.js
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -25,8 +24,8 @@ export default {
       pickupFee: 0,             // 택배 픽업비
       totalAmount: 0,           // 총 결제 금액
       recipient: '',            // 수령인
-      name: '',                  // 이름 추가
-      orderStatus: '주문완료'           // 주문 상태
+      name: '',                 // 이름 추가
+      orderStatus: 'www'        // 초기 상태 설정
     },
   },
   mutations: {
@@ -47,6 +46,10 @@ export default {
       state.order = updatedOrder;
       console.log('Order info updated:', state.order);
     },
+    setOrderStatus(state, status) {
+      state.order.orderStatus = status;
+      console.log('Order status updated:', state.order.orderStatus);
+    },
   },
   getters: {
     fnGetUser(state) {
@@ -65,7 +68,6 @@ export default {
       if (user) {
         commit('fnSetLoading', true);
         try {
-          // Ensure all order details are included and boxQuantity is correct
           const cleanOrder = { ...state.order };
           if (cleanOrder.name) {
             cleanOrder.recipient = cleanOrder.name;
@@ -73,7 +75,7 @@ export default {
 
           console.log('Order data before saving:', cleanOrder);
 
-          // Create a unique document ID if one does not exist
+          // Firestore 문서에 저장
           const userOrdersRef = db.collection('users').doc(user.uid).collection('orders');
           let orderDoc = userOrdersRef.doc('currentOrder');
 
