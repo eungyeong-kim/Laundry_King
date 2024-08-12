@@ -1,20 +1,19 @@
 <template>
   <v-app>
     <v-main>
-      <v-container class="centered-container">
-        <!-- 헤더 부분 -->
-        <v-row class="header-row">
-          <v-col class="header-col">
-            <button @click="goBack">
-              <span class="material-symbols-outlined">chevron_backward</span>
-            </button>
-          </v-col>
-          <v-col class="header-col">
-            <h2>택배픽업 신청</h2>
-          </v-col>
-          <v-col></v-col>
-        </v-row>
+      <!-- 헤더 부분 -->
+      <v-row style="padding:0;">
+      <v-col cols="1">
+        <button @click="goBack">
+          <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
+        </button>
+      </v-col>
+      <v-col cols="10" class="d-flex justify-center align-center">
+        <h2>주문정보</h2>
+      </v-col>
+    </v-row>
 
+      <v-container class="centered-container">
         <!-- 폼 부분 -->
         <v-row class="form-row">
           <v-col cols="12" md="6">
@@ -180,24 +179,23 @@ export default {
 </script>
 
 <style scoped>
+
+.material-symbols-outlined {
+  font-size: 80px;
+  color: #A1A8BD;
+  font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 24;
+}
+
+.v-icon {
+  color: #202020;
+}
+
 .centered-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.header-row {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 0;
-}
-
-.header-col {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .form-row {
   width: 100%;

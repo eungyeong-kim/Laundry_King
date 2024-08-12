@@ -58,7 +58,11 @@
         <div class="form-group">
           <label for="item">품목</label>
           <div class="custom-select">
-            <div class="select-trigger" @click="toggleDropdown('item')" :class="{ disabled: !selectedCategory }">
+            <div
+              class="select-trigger"
+              @click="toggleDropdown('item')"
+              :class="{ disabled: !selectedCategory }"
+            >
               <span>{{ selectedItem ? selectedItem.name : '품목 선택' }}</span>
               <span class="arrow"></span>
             </div>
@@ -88,20 +92,31 @@
       </div>
 
       <div class="button-group">
-        <button @click="submitForm" :disabled="!selectedCategory || !selectedItem">추가하기</button>
+        <button @click="addItemToSelection" :disabled="!selectedCategory || !selectedItem">
+          추가하기
+        </button>
       </div>
     </div>
 
     <!-- 선택 목록 박스 추가 -->
-    <div class="selection-box">
+    <div class="selection-box" v-if="selectedItems.length">
       <h3>선택목록</h3>
       <p>(최소주문 금액은 30,000원 입니다.)</p>
       <ul>
         <li v-for="(item, index) in selectedItems" :key="index">
-          구분: {{ item.category }} - 품목: {{ item.name }} - 금액: {{ (item.price * item.quantity).toLocaleString() }} 원 
+          구분: {{ item.category }} - 품목: {{ item.name }} - 금액: {{
+            (item.price * item.quantity).toLocaleString()
+          }}
+          원
           <div class="quantity-control">
-            수량: 
-            <button class="quantity-button" @click="changeQuantity(item, -1)" :disabled="item.quantity <= 1">-</button>
+            수량:
+            <button
+              class="quantity-button"
+              @click="changeQuantity(item, -1)"
+              :disabled="item.quantity <= 1"
+            >
+              -
+            </button>
             <input
               type="number"
               v-model.number="item.quantity"
@@ -143,7 +158,7 @@
         <br />
         픽업 택배비: {{ pickupFee.toLocaleString() }} 원
         <br />
-        결제 금액: {{ (totalAmount + pickupFee).toLocaleString() }} 원
+        결제 금액: {{ finalPaymentAmount.toLocaleString() }} 원
       </div>
     </div>
 
@@ -185,11 +200,17 @@ export default {
       return this.itemsByCategory[this.selectedCategory] || [];
     },
     totalAmount() {
-      return this.selectedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+      return this.selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    },
+    finalPaymentAmount() {
+      return this.totalAmount + this.pickupFee;
     },
     pickupFee() {
       return this.boxQuantity * this.pickupFeePerBox; // 박스 개수에 따른 픽업비
-    }
+    },
+    canApplyOrder() {
+      return this.finalPaymentAmount >= 30000;
+    },
   },
   methods: {
     ...mapActions(['submitOrder']),
@@ -219,67 +240,68 @@ export default {
       this.selectedItem = item;
       this.amount = item.price;
       this.showItemDropdown = false;
-      const existingItem = this.selectedItems.find(i => i.name === item.name);
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        this.selectedItems.push({ ...item, quantity: 1 });
+    },
+    addItemToSelection() {
+      if (this.selectedItem) {
+        const existingItem = this.selectedItems.find((i) => i.name === this.selectedItem.name);
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          this.selectedItems.push({ ...this.selectedItem, category: this.selectedCategory, quantity: 1 });
+        }
+        this.setOrderInfo({ item: this.selectedItem.name, amount: this.amount });
       }
-      this.setOrderInfo({ item: item.name, amount: item.price });
     },
     changeQuantity(item, amount) {
-      const index = this.selectedItems.findIndex(i => i.name === item.name);
+      const index = this.selectedItems.findIndex((i) => i.name === item.name);
       if (index !== -1) {
         this.selectedItems[index].quantity += amount;
-        if (this.selectedItems[index].quantity <= 0) {
-          this.removeItem(index);
-        } else {
-          this.updateItemAmount(this.selectedItems[index]);
-        }
+        this.updateItemAmount(this.selectedItems[index]);
       }
     },
     updateItemAmount(item) {
-      this.setOrderInfo({ amount: item.price * item.quantity });
-      this.updateTotalAmount();
+      const index = this.selectedItems.findIndex((i) => i.name === item.name);
+      if (index !== -1) {
+        this.selectedItems[index].price = item.price;
+      }
     },
     removeItem(index) {
       this.selectedItems.splice(index, 1);
-      this.updateTotalAmount();
-    },
-    updateTotalAmount() {
-      this.setOrderInfo({ totalAmount: this.totalAmount });
     },
     changeBoxQuantity(amount) {
       this.boxQuantity += amount;
-      if (this.boxQuantity <= 0) {
+      if (this.boxQuantity < 1) {
         this.boxQuantity = 1;
       }
       this.updateTotalAmount();
     },
+    updateTotalAmount() {
+      // Update the total amount when the box quantity changes
+      this.finalPaymentAmount; // This will trigger a recompute of the total payment amount
+    },
     applyOrder() {
-      // Order information setup
-      const orderInfo = {
-        type: this.selectedType,
-        category: this.selectedCategory,
-        item: this.selectedItem ? this.selectedItem.name : '',
-        amount: this.totalAmount,
-        boxQuantity: this.boxQuantity,
-        pickupFee: this.pickupFee,
-        totalAmount: this.totalAmount + this.pickupFee
-      };
-      this.setOrderInfo(orderInfo);
-      this.submitOrder().then(() => {
-        alert('Order submitted successfully');
-      }).catch(error => {
-        console.error('Error submitting order:', error);
-      });
+      if (this.canApplyOrder) {
+        // Order submission logic
+        this.submitOrder()
+          .then(() => {
+            alert("신청이 완료되었습니다!");
+            this.$router.push('/ordersuccess'); // 페이지 이동
+          })
+          .catch((error) => {
+            console.error('주문 제출 실패:', error);
+          });
+      } else {
+        alert("최소 주문 금액은 30,000원 입니다.");
+      }
     },
     goBack() {
-      this.$router.go(-1);
+      this.$router.go(-1); // 뒤로가기
     }
   },
 };
 </script>
+
+
 <style scoped>
 /* Your CSS styling here */
 .apply-button-container {

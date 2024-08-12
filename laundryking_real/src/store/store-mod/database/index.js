@@ -22,7 +22,8 @@ export default {
       amount: 0,                // 상품 금액
       boxQuantity: 1,           // 박스 개수
       pickupFee: 0,             // 택배 픽업비
-      totalAmount: 0            // 총 결제 금액
+      totalAmount: 0,           // 총 결제 금액
+      orderStatus: ''           // 주문 상태
     },
   },
   mutations: {
@@ -94,13 +95,13 @@ export default {
 
           console.log('Order data before saving:', cleanOrder);
 
-          const docRef = db.collection('users').doc(user.uid).collection('additionalInfo').doc('additionalInfo');
+          const docRef = db.collection('users').doc(user.uid).collection('orders').doc(); // 신규 문서 생성
           console.log('Saving order information to Firestore:', cleanOrder);
           
           await docRef.set({
             ...cleanOrder,
-            updatedAt: new Date(), // 현재 시간 저장
-          }, { merge: true });
+            createdAt: new Date(), // 현재 시간 저장
+          });
           
           console.log('Order information submitted successfully');
         } catch (error) {
