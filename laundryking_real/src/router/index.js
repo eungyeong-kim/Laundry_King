@@ -117,7 +117,7 @@ const routes = [
     component: QnaPage,
   },
   {
-    path: '/userhistory',
+    path: '/userhistory/:orderId',
     name: 'userhistory',
     component: UserHistoryPage,
     meta: { bAuth: true } // 인증이 필요한 페이지
