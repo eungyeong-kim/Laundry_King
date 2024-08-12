@@ -147,7 +147,7 @@ const fnGetMenuItems = computed(() => {
       },
       {
         title: '이용내역',
-        to: '/orderhistory',
+        to: '/userhistory',
         icon: 'receipt_long',
       },
     ];
