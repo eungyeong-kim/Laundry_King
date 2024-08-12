@@ -32,13 +32,24 @@
                   <v-btn @click="searchAddress" class="address-button">
                     <v-icon>mdi-magnify</v-icon> <!-- 돋보기 아이콘 -->
                   </v-btn>
-                  <input
-                    type="text"
-                    id="address"
-                    v-model="address"
-                    :class="['custom-input', { 'is-invalid': !address && !valid }]"
-                    placeholder="기본 주소"
-                  />
+                  <div class="address-wrapper">
+                    <input
+                      type="text"
+                      id="postalCode"
+                      v-model="postalCode"
+                      :class="['custom-input', { 'is-invalid': !postalCode && !valid }]"
+                      placeholder="우편번호"
+                      readonly
+                      class="postal-code-input"
+                    />
+                    <input
+                      type="text"
+                      id="address"
+                      v-model="address"
+                      :class="['custom-input', { 'is-invalid': !address && !valid }]"
+                      placeholder="기본 주소"
+                    />
+                  </div>
                   <input
                     type="text"
                     id="detailAddress"
@@ -102,6 +113,7 @@ export default {
       detailAddress: '',  // 상세 주소
       phone: '',
       verificationCode: '',
+      postalCode: '', // 우편번호 추가
       valid: false,
       sentCode: '', // 서버로부터 받은 인증번호
       orderStatus: '주문완료'
@@ -124,6 +136,7 @@ export default {
           detailAddress: this.detailAddress,  // 상세 주소 저장
           phone: this.phone,
           verificationCode: this.verificationCode,
+          postalCode: this.postalCode, // 우편번호 저장
           orderStatus: this.orderStatus
         });
         try {
@@ -141,7 +154,10 @@ export default {
     searchAddress() {
       new daum.Postcode({
         oncomplete: (data) => {
-          this.address = data.roadAddress;
+          // 주소와 우편번호를 폼에 자동으로 입력
+          this.postalCode = data.zonecode; // 우편번호
+          this.address = data.roadAddress; // 도로명 주소
+          this.detailAddress = ''; // 상세 주소 초기화
         },
       }).open();
     },
@@ -154,11 +170,12 @@ export default {
 
       // 임시로 랜덤 인증번호 생성
       this.sentCode = Math.floor(100000 + Math.random() * 900000).toString();
-      console.log('인증번호 발송:', this.sentCode);
+      alert('발송된 임시 인증번호: ' + this.sentCode); // 인증번호를 alert로 표시
+      this.verificationCode = this.sentCode; // 인증번호 입력 필드에 자동으로 설정
     },
     verifyCode() {
       // 인증번호를 검증하지 않고, `valid`를 true로 설정하여 폼 제출을 가능하게 합니다.
-      store.dispatch('modal/openModal', '인증완료.');
+      store.dispatch('modal/openModal', '인증이 완료되었습니다!');
       this.valid = true; // 인증번호 검증 없이 `valid`를 true로 설정하여 폼을 제출 가능하게 함
     },
   },
@@ -174,6 +191,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped>
 

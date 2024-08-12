@@ -18,7 +18,7 @@
         <!-- 종류 추가 -->
         <div class="form-group">
           <label for="type">종류</label>
-          <div class="custom-select">
+          <div class="custom-select" ref="typeSelect">
             <div class="select-trigger" @click="toggleDropdown('type')">
               <span>{{ selectedType || '종류 선택' }}</span>
               <span class="arrow"></span>
@@ -39,14 +39,14 @@
         <!-- 구분 -->
         <div class="form-group">
           <label for="category">구분</label>
-          <div class="custom-select">
+          <div class="custom-select" ref="categorySelect">
             <div class="select-trigger" @click="toggleDropdown('category')">
               <span>{{ selectedCategory || '구분 선택' }}</span>
               <span class="arrow"></span>
             </div>
             <div class="select-options" v-if="showCategoryDropdown">
               <div
-                v-for="category in categories"
+                v-for="category in filteredCategories"
                 :key="category"
                 class="select-option"
                 @click="selectCategory(category)"
@@ -60,7 +60,7 @@
         <!-- 품목 선택 -->
         <div class="form-group">
           <label for="item">품목</label>
-          <div class="custom-select">
+          <div class="custom-select" ref="itemSelect">
             <div
               class="select-trigger"
               @click="toggleDropdown('item')"
@@ -164,17 +164,44 @@
         <br />
         결제 금액: {{ finalPaymentAmount.toLocaleString() }} 원
       </div>
+
+      <div class="notice-box-wrapper">
+              <div class="notice-box">
+                <div class="notice-box-header">
+                  <img src="/images/images/info.png" alt="Info Icon" class="notice-box-icon" />
+                  <span class="notice-box-text">유의사항</span>
+                </div>
+                <div class="notice-box-detail">
+                  <p class="notice-box-detail-text">
+                    • 주문접수 시 틱업 택배비가 선결제됩니다. <br>
+
+                    • 가로+세로+높이 합계가 150cm이상인 박스의 경우 택배사에서 인수거부 또는 추가요금이 발생할 수 있습니다.<br>
+
+                    • 택배비 추가요금 발생 시, 차액은 세탁요금에 부과됩니다. <br>
+
+                    • 택배기사 방문 시, 고객 부재 또는 포장 미비 등의 이유로 택배 수거가 2회 이상 실패한 경우 주문이 자동으로 <br>취소되며, 결제하신 접수 택배비는 위약금으로 환불이 불가능합니다.
+                  </p>
+                </div>
+              </div>
+            </div>
     </div>
+
+    
 
     <!-- 신청하기 버튼 -->
     <div class="apply-button-container">
       <button @click="applyOrder" :disabled="!selectedItems.length || isSubmitting">신청하기</button>
     </div>
+
+    
   </div>
+
+  
 </template>
 
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
+import store from '@/store';  // Vuex 스토어 import
 
 export default {
   data() {
@@ -187,7 +214,11 @@ export default {
       selectedItem: null,
       amount: 0,
       types: ['의류', '신발', '리빙'],
-      categories: ['블라우스', '운동화', '이불'],
+      categories: {
+        의류: ['블라우스'],
+        신발: ['운동화'],
+        리빙: ['이불']
+      },
       itemsByCategory: {
         블라우스: [{ name: '와이셔츠', price: 3000 }, { name: '후드티', price: 7000 }],
         운동화: [{ name: '슬리퍼', price: 8000 }, { name: '구두', price: 12000 }],
@@ -201,6 +232,9 @@ export default {
   },
   computed: {
     ...mapGetters(['fnGetOrderInfo']),
+    filteredCategories() {
+      return this.categories[this.selectedType] || [];
+    },
     filteredItems() {
       return this.itemsByCategory[this.selectedCategory] || [];
     },
@@ -223,8 +257,11 @@ export default {
     toggleDropdown(type) {
       if (type === 'type') {
         this.showTypeDropdown = !this.showTypeDropdown;
+        this.showCategoryDropdown = false;
+        this.showItemDropdown = false;
       } else if (type === 'category') {
         this.showCategoryDropdown = !this.showCategoryDropdown;
+        this.showItemDropdown = false;
       } else if (type === 'item') {
         this.showItemDropdown = !this.showItemDropdown;
       }
@@ -232,11 +269,14 @@ export default {
     selectType(type) {
       this.selectedType = type;
       this.showTypeDropdown = false;
+      this.showCategoryDropdown = false;
+      this.showItemDropdown = false;
       this.setOrderInfo({ type });
     },
     selectCategory(category) {
       this.selectedCategory = category;
       this.showCategoryDropdown = false;
+      this.showItemDropdown = false;
       this.setOrderInfo({ category });
       this.selectedItem = null;
       this.amount = 0;
@@ -256,6 +296,10 @@ export default {
         }
         this.setOrderInfo({ item: this.selectedItem.name, amount: this.amount });
       }
+      // Hide all dropdowns after adding an item
+      this.showTypeDropdown = false;
+      this.showCategoryDropdown = false;
+      this.showItemDropdown = false;
     },
     changeQuantity(item, amount) {
       const index = this.selectedItems.findIndex((i) => i.name === item.name);
@@ -278,7 +322,7 @@ export default {
     },
     async applyOrder() {
       if (!this.canApplyOrder) {
-        alert("최소 주문 금액은 30,000원 입니다.");
+        store.dispatch('modal/openModal', '최소 주문 금액은 30,000원 입니다.');
         return;
       }
       
@@ -297,11 +341,11 @@ export default {
       console.log('Applying order with:', orderData); // 디버깅용 로그
       try {
         await this.submitOrder(orderData);
-        alert("신청이 완료되었습니다!");
+        store.dispatch('modal/openModal', '신청이 완료되었습니다!');
         this.$router.push('/ordersuccess');
       } catch (error) {
         console.error('주문 제출 실패:', error);
-        alert("주문 제출에 실패했습니다. 다시 시도해 주세요.");
+        store.dispatch('modal/openModal', '주문 제출에 실패했습니다. 다시 시도해 주세요.');
       } finally {
         this.isSubmitting = false; // Reset submitting state
       }
@@ -310,6 +354,15 @@ export default {
       this.$router.go(-1);
     }
   },
+  mounted() {
+    this.$nextTick(() => {
+      // 자동으로 '종류' 드롭다운에 포커스
+      const typeSelect = this.$refs.typeSelect;
+      if (typeSelect) {
+        typeSelect.querySelector('.select-trigger').focus();
+      }
+    });
+  },
 };
 </script>
 
@@ -317,26 +370,38 @@ export default {
 
 
 
+
 <style scoped>
-/* Your CSS styling here */
+/* Apply Button Container */
 .apply-button-container {
-  text-align: center;
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 900px; /* 최대 너비 설정 */
+  padding: 0 15px; /* 화면 가장자리와의 간격을 유지하기 위한 패딩 */
+  box-sizing: border-box; /* 패딩을 포함하여 너비를 계산하도록 설정 */
+  margin-left: auto; /* 수평 중앙 정렬을 위한 추가 설정 */
+  margin-right: auto; /* 수평 중앙 정렬을 위한 추가 설정 */
 }
+
 .apply-button-container button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
+  background: #2196F3;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 20px;
+  border-radius: 20px;
+  font-size: 20px;
+  box-shadow: none;
+  width: 1000px;
+  max-width: 100%; /* 버튼의 최대 너비를 컨테이너의 너비에 맞게 조정 */
 }
+
 .apply-button-container button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-
 
 
 
@@ -586,6 +651,7 @@ export default {
   font-weight: bold;
   color: #333;
   text-align: right;
+  margin-bottom: 50px;
 }
 
 /* 새로운 섹션 */
@@ -640,7 +706,7 @@ export default {
   width: 50px; 
   text-align: center;
   border-radius: 4px;
-  font-size: 20px; 
+  font-size: 28px; 
   font-weight: bold;
 }
 
@@ -648,12 +714,13 @@ export default {
   background-color: #64B5F6;
   color: #ffffff;
   border-radius: 50%;
-  width: 28px; 
-  height: 28px; 
+  width: 50px; 
+  height: 50px; 
   text-align: center;
   font-size: 14px; 
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
+  font-size: 25px;
 }
 
 .box-control button:hover {
@@ -674,7 +741,7 @@ export default {
   display: flex;
   flex-direction: column; 
   align-items: center; 
-  padding: 35px;
+  padding: 15px;
   border-radius: 10px;
   background: #F4FAFE;
   position: relative; 
@@ -698,7 +765,7 @@ export default {
 }
 
 .notice-box-text {
-  font-size: 18px;
+  font-size: 16px;
   color: #000000;
   font-weight: bold; 
   text-align: center; 
@@ -714,6 +781,7 @@ export default {
   color: #798094;
   line-height: 1.5; 
 }
+
 
 
 /* 체크박스 */
