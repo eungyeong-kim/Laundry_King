@@ -196,14 +196,6 @@ export default {
 };
 </script>
 
-<style scoped>
-/* 스타일 관련 부분 추가 */
-.submit-button {
-  background-color: blue;
-  color: white;
-}
-</style>
-
 
 <style scoped>
 .material-symbols-outlined {
