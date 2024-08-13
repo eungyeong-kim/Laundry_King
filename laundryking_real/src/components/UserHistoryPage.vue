@@ -4,6 +4,7 @@
         <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
         </v-row>
     <v-row>
+      <v-col></v-col>
     <v-col cols="8" offset="1">
       <!-- 로딩 상태 -->
       <div v-if="loading">
@@ -17,16 +18,21 @@
       
       <!-- 주문 데이터 표시 -->
 
-      <div v-else-if="orderDetail" class="recieptDetail">
+      <div v-else-if="orderDetail">
         <h2 class="mb-10 dateStyle">{{ formattedOrderDate }}</h2>
-        <img class="reciept" src="/images/images/reciept.png" alt="주문완료">
+        <div>
+        <div class="statusTable d-flex">
+          <img src="/images/images/status.png" alt="">
+          <p class="ml-5">주문완료</p>
+        </div>
         <p>수거 예정일: {{ orderDetail.pickupDate }}</p>
         <p>배송 예정일: {{ orderDetail.deliveryDate }}</p>
         <p>결제 금액: {{ orderDetail.totalAmount }}원</p>
         <p>주문 아이템: {{ orderDetail.item }}</p>
+        </div>
       </div>
     </v-col>
-    <v-col></v-col>
+  <v-col></v-col>
   </v-row>
     </v-main>
 </template>
@@ -63,7 +69,7 @@ export default {
       const day = date.getDate();
       const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
       
-      return `${month}월 ${day}일 (${weekday})요일에 주문하신 내역입니다.`;
+      return `${month}월 ${day}일 (${weekday})요일 주문하신 내역입니다.`;
     }
   },
   computed: {
@@ -125,13 +131,13 @@ template, div, footer{
 .dateStyle{
   font-weight: bold;
   font-size: 28px;
+  width: 234px;
 }
-.recieptDetail{
-  width:100%;
-  margin: auto
+.statusTable{
+  width: 400px;
+  border: 1px solid #64B5F6;
+  padding: 30px;
+  border-radius: 20px;
 }
-.reciept{
-  width: 450px;
-  margin: auto;
-}
+
 </style>
