@@ -2,11 +2,9 @@
   <v-main style="padding:0;">
         <v-row style="padding:0;">
         <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
-        <v-col class="d-flex justify-center align-center mt-2"></v-col>
-        <v-col></v-col>
         </v-row>
-        <v-row>
-    <v-col cols="10" offset="2">
+    <v-row>
+    <v-col cols="8" offset="1">
       <!-- 로딩 상태 -->
       <div v-if="loading">
         <p>주문 정보를 불러오는 중입니다...</p>
@@ -18,16 +16,17 @@
       </div>
       
       <!-- 주문 데이터 표시 -->
-      <div v-else-if="orderDetail">
-        <p>{{ formattedOrderDate }}</p>
-        <p>주문 번호: {{ orderDetail.orderNumber }}</p>
-        <p>주문 상태: {{ orderDetail.orderStatus }}</p>
+
+      <div v-else-if="orderDetail" class="recieptDetail">
+        <h2 class="mb-10 dateStyle">{{ formattedOrderDate }}</h2>
+        <img class="reciept" src="/images/images/reciept.png" alt="주문완료">
         <p>수거 예정일: {{ orderDetail.pickupDate }}</p>
         <p>배송 예정일: {{ orderDetail.deliveryDate }}</p>
         <p>결제 금액: {{ orderDetail.totalAmount }}원</p>
         <p>주문 아이템: {{ orderDetail.item }}</p>
       </div>
     </v-col>
+    <v-col></v-col>
   </v-row>
     </v-main>
 </template>
@@ -47,7 +46,7 @@ export default {
   },
   data() {
     return {
-      orders: null,  // 주문 상세 정보 저장
+      orderDetail: null,  // 주문 상세 정보 저장
       loading: true,      // 데이터 로딩 상태를 표시하기 위해 사용
       error: null         // 오류 발생 시 메시지 저장
     };
@@ -56,26 +55,26 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    formatOrderDate(dateString) {
-      const date = new Date(dateString);
-
+    formatOrderDate(timestamp) {
+      // Firestore 타임스탬프를 JavaScript Date 객체로 변환
+      const date = timestamp.toDate();
+      
       const month = date.getMonth() + 1;
       const day = date.getDate();
       const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-
+      
       return `${month}월 ${day}일 (${weekday})요일에 주문하신 내역입니다.`;
     }
   },
   computed: {
-  formattedOrderDate() {
-    // orderDetail이 null인지 확인
-    if (!this.orders || !this.orders.createdAt) {
-      return ""; // orderDetail이 null이거나 orderDate가 없을 때는 빈 문자열 반환
-    }
+    formattedOrderDate() {
+      if (!this.orderDetail || !this.orderDetail.createdAt) {
+        return "주문 날짜를 불러올 수 없습니다."; 
+      }
 
-    return this.formatOrderDate(this.orders.createdAt);
-  }
-},
+      return this.formatOrderDate(this.orderDetail.createdAt);
+    }
+  },
   async created() {
     try {
         const user = firebase.auth().currentUser;
@@ -122,5 +121,17 @@ export default {
 
 template, div, footer{
     padding:0;
+}
+.dateStyle{
+  font-weight: bold;
+  font-size: 28px;
+}
+.recieptDetail{
+  width:100%;
+  margin: auto
+}
+.reciept{
+  width: 450px;
+  margin: auto;
 }
 </style>
