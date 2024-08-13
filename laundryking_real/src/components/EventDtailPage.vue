@@ -189,12 +189,18 @@ export default {
 
 /* 버튼 스타일 */
 .blue-button {
-  background-color: #2196F3; 
-  font-weight: bold; 
-  border-radius: 10px; 
+  background-color: #2196F3;
+  font-weight: bold;
+  border-radius: 10px;
   color: #ffffff;
   width: 500px;
   box-shadow: none;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 세로 중앙 정렬 */
+  height: 50px; /* 버튼 높이 설정 (필요 시 조정) */
+  font-size: 18px;
 }
 
 .blue-button:hover {

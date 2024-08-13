@@ -2,15 +2,14 @@
   <v-app>
     <v-main>
       <v-row style="padding:0;">
-        <v-col>
+        <v-col cols="1">
           <button @click="goBack">
             <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
           </button>
         </v-col>
-        <v-col class="d-flex justify-center align-center mt-2">
+        <v-col cols="10" class="d-flex justify-center align-center">
           <h2>이벤트</h2>
         </v-col>
-        <v-col></v-col>
       </v-row>
 
       <v-container class="d-flex flex-column align-center">
@@ -23,7 +22,7 @@
           <v-tab-item>
             <div v-if="activeTab === 0" class="event-list">
               <v-card
-                v-for="event in ongoingEvents"
+                v-for="event in paginatedOngoingEvents"
                 :key="event.id"
                 :style="{ backgroundColor: event.backgroundColor }"
                 class="mb-0 event-card"
@@ -43,15 +42,23 @@
                   </v-col>
                 </v-row>
               </v-card>
+              <v-pagination
+                v-model="currentPageOngoing"
+                :length="totalPagesOngoing"
+                @input="updatePageOngoing"
+                class="my-4"
+                circle
+                total-visible="7"
+              ></v-pagination>
             </div>
           </v-tab-item>
 
           <v-tab-item>
             <div v-if="activeTab === 1" class="event-list">
               <v-card
-                v-for="event in endedEvents"
+                v-for="event in paginatedEndedEvents"
                 :key="event.id"
-                :style="{ backgroundColor: event.backgroundColor, opacity: 0.5 }" 
+                :style="{ backgroundColor: event.backgroundColor, opacity: 0.5 }"
                 class="mb-0 event-card"
                 outlined
               >
@@ -68,6 +75,14 @@
                   </v-col>
                 </v-row>
               </v-card>
+              <v-pagination
+                v-model="currentPageEnded"
+                :length="totalPagesEnded"
+                @input="updatePageEnded"
+                class="my-4"
+                circle
+                total-visible="7"
+              ></v-pagination>
             </div>
           </v-tab-item>
         </v-tabs-items>
@@ -97,8 +112,29 @@ export default {
         { id: 10, subtitle: '이벤트', title: '여름 맞이 운동화 세탁<br> 세탁왕으로 해결!', description: '1+1 쿠폰이 숨어있어요', image: '/images/images/icon-sportshoes.png', backgroundColor: '#F8ECFD' },
         { id: 11, subtitle: '경품증정', title: '그램 단위로 구매하는<br>빈티지 스토어 ‘워셔’', description: '이젠 합리적으로 득템하세요', image: '/images/images/icon-washer.png', backgroundColor: '#FCEAE4' },
         { id: 12, subtitle: '경품증정', title: '세탁왕에서만 열리는<br> 리뷰 이벤트라곰!', description: '스너글로 세탁받고 선물까지!', image: '/images/images/icon-bear.png', backgroundColor: '#E0F8EA' },
-      ]
+      ],
+      itemsPerPage: 4, // 한 페이지에 표시할 아이템 수
+      currentPageOngoing: 1,  // 현재 페이지(진행중 이벤트)
+      currentPageEnded: 1,  // 현재 페이지(종료된 이벤트)
     };
+  },
+  computed: {
+    paginatedOngoingEvents() {
+      const start = (this.currentPageOngoing - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.ongoingEvents.slice(start, end);
+    },
+    paginatedEndedEvents() {
+      const start = (this.currentPageEnded - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.endedEvents.slice(start, end);
+    },
+    totalPagesOngoing() {
+      return Math.ceil(this.ongoingEvents.length / this.itemsPerPage);
+    },
+    totalPagesEnded() {
+      return Math.ceil(this.endedEvents.length / this.itemsPerPage);
+    },
   },
   methods: {
     goBack() {
@@ -108,6 +144,12 @@ export default {
       if (id === 1) {
         this.$router.push('/eventdetail');
       }
+    },
+    updatePageOngoing(page) {
+      this.currentPageOngoing = page;
+    },
+    updatePageEnded(page) {
+      this.currentPageEnded = page;
     }
   }
 }
@@ -129,7 +171,7 @@ export default {
 }
 
 .v-tab--active {
-  font-weight: 600;
+  font-weight: 800;
 }
 
 /* event list */
@@ -138,22 +180,23 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 300px;
+  max-width: 450px; /* 카드 최대 너비 증가 */
 }
 
 .event-card {
   border-radius: 20px;
   margin-top: 20px;
-  width: 300px;
-  max-width: 300px;
-  padding: 3px;
+  width: 450px; /* 카드 너비 증가 */
+  max-width: 450px; /* 카드 최대 너비 증가 */
+  padding: 20px; /* 패딩 증가 */
   box-shadow: none;
 }
 
 .event-image {
-  width: 100%;
+  width: 100%; /* 이미지 너비를 카드와 맞춤 */
+  height: auto; /* 비율 유지 */
   object-fit: cover;
-  margin-right: 30px;
+  margin-right: 10px; /* 오른쪽 여백 감소 */
 }
 
 .event-card .v-row {
@@ -164,30 +207,31 @@ export default {
   display: inline-block;
   background-color: #535A6C;
   border-radius: 50px;
-  padding: 3px;
-  width: 80px;
+  padding: 6px; /* 패딩 증가 */
+  width: 110px; /* 너비 증가 */
   margin-left: 15px;
   margin-top: 10px;
   text-align: center;
 }
 
 .subtitle {
-  font-size: 10px;
+  font-size: 13px; /* 폰트 사이즈 증가 */
   color: #ffffff;
-  opacity: 100%;
   font-weight: bold;
+  opacity: 100%;
 }
 
 .title {
-  font-size: 13px;
+  font-size: 18px; /* 폰트 사이즈 증가 */
   font-weight: bold;
   overflow: hidden;   
   text-overflow: ellipsis; 
-  line-height: 1.4; 
+  line-height: 1.8; /* 줄 높이 증가 */
 }
 
 .description {
-  font-size: 10px;
+  font-size: 13px; /* 폰트 사이즈 증가 */
   color: #444;
 }
+
 </style>
