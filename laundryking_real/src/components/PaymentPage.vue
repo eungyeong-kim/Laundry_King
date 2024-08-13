@@ -186,17 +186,11 @@
             </div>
     </div>
 
-    
-
     <!-- 신청하기 버튼 -->
     <div class="apply-button-container">
       <button @click="applyOrder" :disabled="!selectedItems.length || isSubmitting">신청하기</button>
     </div>
-
-    
   </div>
-
-  
 </template>
 
 <script>
@@ -294,7 +288,10 @@ export default {
         } else {
           this.selectedItems.push({ ...this.selectedItem, category: this.selectedCategory, quantity: 1 });
         }
-        this.setOrderInfo({ item: this.selectedItem.name, amount: this.amount });
+        this.setOrderInfo({
+          item: this.selectedItem.name,
+          amount: this.amount
+        });
       }
       // Hide all dropdowns after adding an item
       this.showTypeDropdown = false;
@@ -325,24 +322,44 @@ export default {
         store.dispatch('modal/openModal', '최소 주문 금액은 30,000원 입니다.');
         return;
       }
-      
+
       if (this.isSubmitting) {
         return; // Prevent multiple submissions
       }
-      
+
       this.isSubmitting = true; // Set submitting state
       const orderData = {
-        totalAmount: this.totalAmount,
+        address: this.$refs.address ? this.$refs.address.value : '', // 예시로 추가
+        detailAddress: this.$refs.detailAddress ? this.$refs.detailAddress.value : '', // 예시로 추가
+        phone: this.$refs.phone ? this.$refs.phone.value : '', // 예시로 추가
+        pickupDate: this.$refs.pickupDate ? this.$refs.pickupDate.value : '', // 예시로 추가
+        deliveryDate: this.$refs.deliveryDate ? this.$refs.deliveryDate.value : '', // 예시로 추가
+        cleaningRequest: this.$refs.cleaningRequest ? this.$refs.cleaningRequest.value : '', // 예시로 추가
+        isChecked: this.$refs.isChecked ? this.$refs.isChecked.checked : false, // 예시로 추가
+        type: this.selectedType,
+        category: this.selectedCategory,
+        item: this.selectedItem ? this.selectedItem.name : '',
+        amount: this.amount,
+        boxQuantity: this.boxQuantity,
         pickupFee: this.pickupFee,
         finalPaymentAmount: this.finalPaymentAmount,
-        boxQuantity: this.boxQuantity,
-        items: this.selectedItems
+        recipient: this.$refs.recipient ? this.$refs.recipient.value : '', // 예시로 추가
+        name: this.$refs.name ? this.$refs.name.value : '', // 예시로 추가
       };
-      console.log('Applying order with:', orderData); // 디버깅용 로그
+
+      // 디버깅용 로그
+      console.log('Applying order with:', orderData);
+
       try {
         await this.submitOrder(orderData);
+        
+        // 팝업창 열기
         store.dispatch('modal/openModal', '신청이 완료되었습니다!');
-        this.$router.push('/ordersuccess');
+
+        // 팝업창이 열린 후 페이지 이동
+        setTimeout(() => {
+          this.$router.push('/ordersuccess');
+        }, 1000); // 1초 후 페이지 이동
       } catch (error) {
         console.error('주문 제출 실패:', error);
         store.dispatch('modal/openModal', '주문 제출에 실패했습니다. 다시 시도해 주세요.');
@@ -356,17 +373,16 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      // 자동으로 '종류' 드롭다운에 포커스
+      // 특정 요소에 포커스를 맞춰 스크롤을 자동으로 이동
       const typeSelect = this.$refs.typeSelect;
       if (typeSelect) {
         typeSelect.querySelector('.select-trigger').focus();
+        window.scrollTo(0, 0); // 페이지의 맨 위로 스크롤
       }
     });
   },
 };
 </script>
-
-
 
 
 
