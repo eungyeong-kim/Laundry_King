@@ -14,14 +14,14 @@
         </v-carousel>
         <v-row class="d-flex justify-center mt-5 btn_img">
             <v-col cols="5" class="text-center">
-                <v-btn class="w-100 h-100 border-radius-15 text-left-btn" variant="outlined" color="#F0F2F9" to="/pickupapply">
+                <v-btn class="w-100 h-100 border-radius-15 text-left-btn" variant="outlined" color="#CCD3E8" to="/pickupapply">
                     <p class="applybtn">세탁<br>신청</p>
                     <img src="/images/images/main_btn1.png" alt="" width="90px">
                 </v-btn>
             </v-col>
 
             <v-col cols="5" class="text-center">
-                <v-btn class="w-100 h-100 border-radius-15 text-left-btn" variant="outlined" color="#F0F2F9" to="/charge">
+                <v-btn class="w-100 h-100 border-radius-15 text-left-btn" variant="outlined" color="#CCD3E8" to="/charge">
                     <p class="applybtn">요금표</p>
                     <img src="/images/images/main_btn2.png" alt="" width="90px">
                 </v-btn>
@@ -46,7 +46,7 @@
 
         <v-row class="d-flex justify-center btn_img3">
             <v-col cols="10">
-                <v-btn color="#F0F2F9" class="w-100 h-auto text-right-btn border-radius-9999" variant="outlined" to="/pickup">
+                <v-btn color="#CCD3E8" class="w-100 h-auto text-right-btn border-radius-9999" variant="outlined" to="/pickup">
                     <img src="/images/images/main_btn4.png" alt="" width="53px">
                     <p class="pickup">픽업 가능 지역</p>
                 </v-btn>
@@ -145,6 +145,9 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
                     '#F8ECFD'
                 ]
             }
+        },
+        mounted() {
+            window.scrollTo(0, 0);  // 페이지 최상단으로 스크롤
         }
     }
 </script>
@@ -254,5 +257,8 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
 .eventContent span {
     font-size: 12px;
     font-weight: normal;
+}
+.v-carousel .v-carousel__controls__item {
+    height: 5px !important;
 }
 </style>
