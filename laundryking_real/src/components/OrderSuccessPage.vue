@@ -11,7 +11,7 @@
       <v-container class="centered-container">
         <div class="order-message">
           <h3>주문을 완료했어요!</h3>
-          <p>포근한 배송해드릴게요.</p>
+          <p>포근하게 배송해드릴게요.</p>
         </div>
         <hr class="divider" />
         <div class="order-details-box">
@@ -76,30 +76,40 @@
 </template>
 
 <script>
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { computed } from 'vue';
 
 export default {
   setup() {
     const router = useRouter();
     const store = useStore();
+    const isPopupVisible = ref(true);
 
     // Vuex에서 orderDetails를 가져옵니다
     const orderDetails = computed(() => store.getters.fnGetOrderInfo);
 
+    function closePopup() {
+      isPopupVisible.value = false;
+    }
+
     function goToOrderHistory() {
-      router.push('/orderhistory'); // 주문상세보기 버튼 클릭 시 /orderhistory로 이동
+      router.push('/orderhistory');
     }
 
     function goToHome() {
-      router.push('/main'); // 홈으로 버튼 클릭 시 /main으로 이동
+      router.push('/main');
     }
 
-    return { orderDetails, goToOrderHistory, goToHome };
+    onMounted(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    return { orderDetails, goToOrderHistory, goToHome, closePopup, isPopupVisible };
   }
 };
 </script>
+
 
 <style scoped>
 .material-symbols-outlined {

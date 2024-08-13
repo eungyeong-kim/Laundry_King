@@ -69,7 +69,7 @@
                     :class="['custom-input', { 'is-invalid': !phone && !valid }]"
                     placeholder="연락처를 입력해주세요"
                   />
-                  <v-btn @click="requestVerificationCode" class="phone-button">
+                  <v-btn @click="requestVerificationCode" :disabled="!phone" class="phone-button">
                     인증번호 발송
                   </v-btn>
                 </div>
@@ -84,7 +84,7 @@
                     :class="['custom-input', { 'is-invalid': !verificationCode && !valid }]"
                     placeholder="인증번호를 입력해주세요"
                   />
-                  <v-btn @click="verifyCode" class="verification-button">
+                  <v-btn @click="verifyCode" :disabled="!verificationCode" class="verification-button">
                     인증번호 확인
                   </v-btn>
                 </div>
@@ -192,10 +192,7 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
-
 .material-symbols-outlined {
   font-size: 80px;
   color: #A1A8BD;
@@ -211,7 +208,6 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-
 
 .form-row {
   width: 100%;
@@ -287,6 +283,5 @@ export default {
   color: #ffffff;
   border-radius: 10px;
   box-shadow: none;
-
 }
 </style>
