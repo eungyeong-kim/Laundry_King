@@ -195,7 +195,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
-import store from '@/store';  // Vuex 스토어 import
+import store from '@/store'; // Vuex 스토어 import
 
 export default {
   data() {
@@ -221,7 +221,7 @@ export default {
       selectedItems: [],
       boxQuantity: 1,
       pickupFeePerBox: 4900,
-      isSubmitting: false, // Prevent multiple submissions
+      isSubmitting: false,
     };
   },
   computed: {
@@ -279,43 +279,43 @@ export default {
       this.selectedItem = item;
       this.amount = item.price;
       this.showItemDropdown = false;
+      this.setOrderInfo({ item: item.name, amount: this.amount });
     },
     addItemToSelection() {
-      if (this.selectedItem) {
-        const existingItem = this.selectedItems.find((i) => i.name === this.selectedItem.name);
+      if (this.selectedItem && this.amount > 0) {
+        const existingItem = this.selectedItems.find(
+          (i) => i.name === this.selectedItem.name
+        );
         if (existingItem) {
-          existingItem.quantity += 1;
+          existingItem.quantity++;
         } else {
-          this.selectedItems.push({ ...this.selectedItem, category: this.selectedCategory, quantity: 1 });
+          this.selectedItems.push({
+            category: this.selectedCategory,
+            name: this.selectedItem.name,
+            price: this.amount,
+            quantity: 1,
+          });
         }
-        this.setOrderInfo({
-          item: this.selectedItem.name,
-          amount: this.amount
-        });
-      }
-      // Hide all dropdowns after adding an item
-      this.showTypeDropdown = false;
-      this.showCategoryDropdown = false;
-      this.showItemDropdown = false;
-    },
-    changeQuantity(item, amount) {
-      const index = this.selectedItems.findIndex((i) => i.name === item.name);
-      if (index !== -1) {
-        this.selectedItems[index].quantity += amount;
-        this.updateItemAmount(this.selectedItems[index]);
-      }
-    },
-    updateItemAmount(item) {
-      const index = this.selectedItems.findIndex((i) => i.name === item.name);
-      if (index !== -1) {
-        this.selectedItems[index].price = item.price;
       }
     },
     removeItem(index) {
       this.selectedItems.splice(index, 1);
     },
-    changeBoxQuantity(amount) {
-      this.boxQuantity = Math.max(1, this.boxQuantity + amount);
+    changeQuantity(item, delta) {
+      const newQuantity = item.quantity + delta;
+      if (newQuantity > 0) {
+        item.quantity = newQuantity;
+        this.updateItemAmount(item);
+      }
+    },
+    updateItemAmount(item) {
+      item.amount = item.price * item.quantity;
+    },
+    changeBoxQuantity(delta) {
+      const newQuantity = this.boxQuantity + delta;
+      if (newQuantity > 0) {
+        this.boxQuantity = newQuantity;
+      }
     },
     async applyOrder() {
       if (!this.canApplyOrder) {
@@ -323,36 +323,23 @@ export default {
         return;
       }
 
-      if (this.isSubmitting) {
-        return; // Prevent multiple submissions
-      }
-
-      this.isSubmitting = true; // Set submitting state
-      const orderData = {
-        address: this.$refs.address ? this.$refs.address.value : '', // 예시로 추가
-        detailAddress: this.$refs.detailAddress ? this.$refs.detailAddress.value : '', // 예시로 추가
-        phone: this.$refs.phone ? this.$refs.phone.value : '', // 예시로 추가
-        pickupDate: this.$refs.pickupDate ? this.$refs.pickupDate.value : '', // 예시로 추가
-        deliveryDate: this.$refs.deliveryDate ? this.$refs.deliveryDate.value : '', // 예시로 추가
-        cleaningRequest: this.$refs.cleaningRequest ? this.$refs.cleaningRequest.value : '', // 예시로 추가
-        isChecked: this.$refs.isChecked ? this.$refs.isChecked.checked : false, // 예시로 추가
-        type: this.selectedType,
-        category: this.selectedCategory,
-        item: this.selectedItem ? this.selectedItem.name : '',
-        amount: this.amount,
+      this.isSubmitting = true;
+      this.setOrderInfo({
+        selectedItems: this.selectedItems,
         boxQuantity: this.boxQuantity,
-        pickupFee: this.pickupFee,
         finalPaymentAmount: this.finalPaymentAmount,
-        recipient: this.$refs.recipient ? this.$refs.recipient.value : '', // 예시로 추가
-        name: this.$refs.name ? this.$refs.name.value : '', // 예시로 추가
-      };
+      });
 
-      // 디버깅용 로그
-      console.log('Applying order with:', orderData);
+      const orderData = {
+        items: this.selectedItems,
+        boxQuantity: this.boxQuantity,
+        finalPaymentAmount: this.finalPaymentAmount,
+        createdAt: new Date(),
+      };
 
       try {
         await this.submitOrder(orderData);
-        
+
         // 팝업창 열기
         store.dispatch('modal/openModal', '신청이 완료되었습니다!');
 
@@ -369,7 +356,7 @@ export default {
     },
     goBack() {
       this.$router.go(-1);
-    }
+    },
   },
   mounted() {
     this.$nextTick(() => {

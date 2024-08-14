@@ -14,7 +14,7 @@
           <p>포근하게 배송해드릴게요.</p>
         </div>
         <hr class="divider" />
-        <div class="order-details-box">
+        <div class="order-details-box" v-if="orderDetails">
           <div class="detail-row">
             <span class="detail-label">주문 내용:</span>
             <span class="detail-value">
@@ -47,7 +47,7 @@
           <hr class="sub-divider" />
           <div class="detail-row payment-details">
             <span class="detail-label">결제 금액:</span>
-            <span class="detail-value">{{ orderDetails.totalAmount.toLocaleString() }} 원</span>
+            <span class="detail-value">{{ orderDetails.finalPaymentAmount.toLocaleString() }} 원</span>
           </div>
         </div>
 
@@ -76,37 +76,23 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
-  setup() {
-    const router = useRouter();
-    const store = useStore();
-    const isPopupVisible = ref(true);
-
-    // Vuex에서 orderDetails를 가져옵니다
-    const orderDetails = computed(() => store.getters.fnGetOrderInfo);
-
-    function closePopup() {
-      isPopupVisible.value = false;
-    }
-
-    function goToOrderHistory() {
-      router.push('/orderhistory');
-    }
-
-    function goToHome() {
-      router.push('/main');
-    }
-
-    onMounted(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    return { orderDetails, goToOrderHistory, goToHome, closePopup, isPopupVisible };
-  }
+  computed: {
+    ...mapGetters(['fnGetOrderInfo']),
+    orderDetails() {
+      return this.fnGetOrderInfo || {};
+    },
+  },
+  methods: {
+    goToOrderHistory() {
+      this.$router.push('/order-history');
+    },
+    goToHome() {
+      this.$router.push('/');
+    },
+  },
 };
 </script>
 
