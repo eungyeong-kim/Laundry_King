@@ -2,14 +2,9 @@
   <v-app>
     <v-main>
       <v-row style="padding:0;">
-        <v-col cols="1">
-          <button @click="goBack">
-            <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
-          </button>
-        </v-col>
-        <v-col cols="10" class="d-flex justify-center align-center">
-          <h2>이벤트</h2>
-        </v-col>
+        <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
+        <v-col class="d-flex justify-center align-center mt-2"><h2>이벤트</h2></v-col>
+        <v-col></v-col>
       </v-row>
 
       <v-container class="d-flex flex-column align-center">

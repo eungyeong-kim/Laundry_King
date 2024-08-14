@@ -2,14 +2,9 @@
   <v-app>
     <v-main>
       <v-row style="padding:0;">
-        <v-col cols="1">
-          <button @click="goBack">
-            <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
-          </button>
-        </v-col>
-        <v-col cols="10" class="d-flex justify-center align-center">
-          <h2>주문정보</h2>
-        </v-col>
+        <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
+        <v-col class="d-flex justify-center align-center mt-2"><h2>주문정보</h2></v-col>
+        <v-col></v-col>
       </v-row>
 
       <v-container class="centered-container">
@@ -84,19 +79,21 @@
             </div>
 
             <div class="notice-box-wrapper">
-              <div class="notice-box">
-                <div class="notice-box-header">
-                  <img src="/images/images/info.png" alt="Info Icon" class="notice-box-icon" />
-                  <span class="notice-box-text">유의사항</span>
-                </div>
-                <div class="notice-box-detail">
-                  <p class="notice-box-detail-text">
-                    • 1회 최소 주문금액은 30,000원이에요. (픽업 택배비는 별도 결제)<br>
-                    • 최소 주문금액 미달 시 기준가인 30,000원에서 쿠폰 등 할인이 적용돼요.
-                  </p>
-                </div>
-              </div>
-            </div>
+  <div class="notice-box">
+    <div class="notice-box-header">
+      <img src="/images/images/info.png" alt="Info Icon" class="notice-box-icon" />
+      <span class="notice-box-text">유의사항</span>
+    </div>
+    <div class="notice-box-detail">
+      <p class="notice-box-detail-text">
+        • 1회 최소 주문금액은 30,000원이에요. (픽업 택배비는 별도 결제)<br>
+        • 최소 주문금액 미달 시 기준가인 30,000원에서 쿠폰 등 할인이 적용돼요.
+      </p>
+    </div>
+  </div>
+</div>
+
+
 
             <v-btn @click="submit" :disabled="submitting" class="submit-button mt-4">
               다음
@@ -351,39 +348,34 @@ export default {
 .notice-box-wrapper {
   margin-bottom: 16px; 
 }
+
 .notice-box {
   display: flex;
   flex-direction: column; 
   align-items: center; 
   padding: 15px;
   border-radius: 10px;
-  background: #F4FAFE;
-  position: relative; 
+  background: #FFEDED;
 }
 
 .notice-box-header {
   display: flex;
-  align-items: center; 
-  justify-content: center; 
-  width: 100%; 
-  position: relative;
+  align-items: center; /* 아이콘과 텍스트 수직 정렬 */
+  width: 100%;
+  justify-content: center; /* 아이콘과 텍스트가 가운데 정렬되도록 */
 }
 
 .notice-box-icon {
-  position: absolute; 
-  left: -5px;
-  top: 50%;
-  transform: translateY(-50%);
   width: 30px; 
   height: 30px; 
+  margin-right: 10px; /* 아이콘과 텍스트 사이의 간격 조정 */
 }
 
 .notice-box-text {
   font-size: 16px;
   color: #000000;
-  font-weight: bold; 
-  text-align: center; 
-  flex: 1; /* 텍스트가 중앙에 위치하도록 하기 */
+  font-weight: bold;
+  text-align: center;
 }
 
 .notice-box-detail {
@@ -396,6 +388,8 @@ export default {
   line-height: 1.5; 
 }
 
+
+/* submit button */
 .submit-button {
   width: 100%;
   background: #2196F3;

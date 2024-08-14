@@ -2,14 +2,9 @@
   <v-app>
     <v-main>
       <v-row style="padding:0;">
-        <v-col cols="1">
-          <button @click="goBack">
-            <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
-          </button>
-        </v-col>
-        <v-col cols="10" class="d-flex justify-center align-center">
-          <h2>주문정보</h2>
-        </v-col>
+        <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
+        <v-col class="d-flex justify-center align-center mt-2"><h2>주문정보</h2></v-col>
+        <v-col></v-col>
       </v-row>
 
       <v-container class="centered-container">
@@ -30,7 +25,7 @@
                 <label for="address">배송 주소</label>
                 <div class="address-input-wrapper">
                   <v-btn @click="searchAddress" class="address-button">
-                    <v-icon>mdi-magnify</v-icon> <!-- 돋보기 아이콘 -->
+                    <v-icon>mdi-magnify</v-icon>
                   </v-btn>
                   <div class="address-wrapper">
                     <input
@@ -56,6 +51,7 @@
                     v-model="detailAddress"
                     :class="['custom-input', { 'is-invalid': !detailAddress && !valid }]"
                     placeholder="상세 주소"
+                    ref="detailAddressInput" 
                   />
                 </div>
               </div>
@@ -69,10 +65,14 @@
                     :class="['custom-input', { 'is-invalid': !phone && !valid }]"
                     placeholder="연락처를 입력해주세요"
                   />
-                  <v-btn @click="requestVerificationCode" :disabled="phone.length !== 11" class="phone-button">
-  인증번호 발송
-</v-btn>
-
+                  <v-btn
+                    @click="requestVerificationCode"
+                    :disabled="phone.length < 9 || phone.length > 11"
+                    class="phone-button"
+                    :class="{ 'disabled-button': phone.length < 9 || phone.length > 11 }"
+                  >
+                    인증번호 발송
+                  </v-btn>
                 </div>
               </div>
               <div class="form-field-wrapper">
@@ -85,9 +85,14 @@
                     :class="['custom-input', { 'is-invalid': !verificationCode && !valid }]"
                     placeholder="인증번호를 입력해주세요"
                   />
-                  <v-btn @click="verifyCode" :disabled="!verificationCode" class="verification-button">
-  인증번호 확인
-</v-btn>
+                  <v-btn
+                    @click="verifyCode"
+                    :disabled="!verificationCode"
+                    class="verification-button"
+                    :class="{ 'disabled-button': !verificationCode }"
+                  >
+                    인증번호 확인
+                  </v-btn>
                 </div>
               </div>
               <v-btn @click="submit" :disabled="!valid" class="submit-button mt-4">
@@ -159,6 +164,11 @@ export default {
           this.postalCode = data.zonecode; // 우편번호
           this.address = data.roadAddress; // 도로명 주소
           this.detailAddress = ''; // 상세 주소 초기화
+
+          // 다음 tick에서 상세 주소 입력 필드에 포커스를 설정
+          this.$nextTick(() => {
+            this.$refs.detailAddressInput.focus();
+          });
         },
       }).open();
     },
@@ -193,7 +203,17 @@ export default {
 };
 </script>
 
+
 <style scoped>
+/* 버튼 비활성화 시 적용할 스타일 */
+.disabled-button {
+  background-color: #E0E0E0 !important;
+  color: #9b9a9a !important;
+  border: 1px solid #E0E0E0 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
 .material-symbols-outlined {
   font-size: 80px;
   color: #A1A8BD;
@@ -229,14 +249,14 @@ export default {
 .custom-input {
   width: 100%;
   border: none;
-  border-bottom: 1px solid #E0E0E0; /* 하단 선 추가 */
-  background-color: transparent; /* 배경색 제거 */
+  border-bottom: 1px solid #E0E0E0;
+  background-color: transparent;
   padding: 8px 4px;
   box-sizing: border-box;
 }
 
 .custom-input:focus {
-  outline: none; /* 포커스 시 기본 아웃라인 제거 */
+  outline: none;
 }
 
 .is-invalid {
@@ -252,16 +272,16 @@ export default {
 .address-button {
   position: absolute;
   right: 0;
-  top: 10px; /* 인풋 필드 상단에 버튼 위치 */
+  top: 10px;
   padding: 0;
   min-width: 50px;
-  height: 32px; /* 버튼 높이 조정 */
+  height: 32px;
   box-shadow: none;
   color: #A1A8BD;
 }
 
 .address-input-wrapper .custom-input {
-  padding-right: 50px; /* 버튼을 위한 공간 확보 */
+  padding-right: 50px;
 }
 
 .phone-button,
@@ -271,11 +291,11 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   padding: 0;
-  height: 32px; /* 버튼 높이 조정 */
+  height: 32px;
   display: flex;
-  border: 1px solid #A1A8BD;
+  border: 1px solid #2196F3;
   box-shadow: none;
-  color: #A1A8BD;
+  color: #2196F3;
 }
 
 .submit-button {

@@ -2,15 +2,10 @@
   <div id="app">
     <!-- 상단 바와 선택 메뉴 -->
     <v-row style="padding:0;">
-      <v-col cols="1">
-        <button @click="goBack">
-          <span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span>
-        </button>
-      </v-col>
-      <v-col cols="10" class="d-flex justify-center align-center">
-        <h2>의류 품목을 선택하세요</h2>
-      </v-col>
-    </v-row>
+        <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
+        <v-col class="d-flex justify-center align-center mt-2"><h2>의류 품목을 선택하세요</h2></v-col>
+        <v-col></v-col>
+      </v-row>
 
     <!-- 폼과 선택 목록 -->
     <div class="form-container">
@@ -742,39 +737,34 @@ export default {
 .notice-box-wrapper {
   margin-bottom: 16px; 
 }
+
 .notice-box {
   display: flex;
   flex-direction: column; 
   align-items: center; 
-  padding: 15px;
+  padding: 25px;
   border-radius: 10px;
-  background: #F4FAFE;
-  position: relative; 
+  background: #FFEDED;
 }
 
 .notice-box-header {
   display: flex;
-  align-items: center; 
-  justify-content: center; 
-  width: 100%; 
-  position: relative;
+  align-items: center; /* 아이콘과 텍스트 수직 정렬 */
+  width: 100%;
+  justify-content: center; /* 아이콘과 텍스트가 가운데 정렬되도록 */
 }
 
 .notice-box-icon {
-  position: absolute; 
-  left: -5px;
-  top: 50%;
-  transform: translateY(-50%);
   width: 30px; 
   height: 30px; 
+  margin-right: 10px; /* 아이콘과 텍스트 사이의 간격 조정 */
 }
 
 .notice-box-text {
   font-size: 16px;
   color: #000000;
-  font-weight: bold; 
-  text-align: center; 
-  flex: 1; /* 텍스트가 중앙에 위치하도록 하기 */
+  font-weight: bold;
+  text-align: center;
 }
 
 .notice-box-detail {
@@ -786,7 +776,6 @@ export default {
   color: #798094;
   line-height: 1.5; 
 }
-
 
 
 /* 체크박스 */
