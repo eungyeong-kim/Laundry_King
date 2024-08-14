@@ -200,8 +200,14 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
 .text-right-btn {
     justify-content: flex-end;
 }
+.text-right-btn:hover {
+    background: #FAFAFA; 
+}
 .text-left-btn {
     justify-content: flex-start;
+}
+.text-left-btn:hover {
+    background: #FAFAFA;
 }
 .border-radius-15 {
     border-radius: 15px;
@@ -211,7 +217,7 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
 }
 .f-color-A1A8BD {
     color: #A1A8BD;
-    font-size: 10px;
+    font-size: 12px;
 }
 .cut-line {
     width: 100%;
@@ -234,13 +240,13 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
     right: -40px;
 }
 .tipSubTitle {
-    font-size: 10px;
-    margin-top: 42px;
+    font-size: 12px;
+    margin-top: 43px;
     margin-left: 40px;
     color: #fff;
 }
 .tipTitle {
-    font-size: 26px;
+    font-size: 30px;
     margin-left: 40px;
     color: #fff;
 }
@@ -257,8 +263,5 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
 .eventContent span {
     font-size: 12px;
     font-weight: normal;
-}
-.v-carousel .v-carousel__controls__item {
-    height: 5px !important;
 }
 </style>

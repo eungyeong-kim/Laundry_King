@@ -104,7 +104,8 @@ const routes = [
   {
     path: '/pickupapply',
     name: 'pickupapply',
-    component: PickupApplyPage
+    component: PickupApplyPage,
+    meta: { bAuth: true } // 인증이 필요한 페이지
   },
   {
     path: '/pickup',
@@ -139,7 +140,11 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    // 페이지 전환 시 항상 최상단으로 스크롤
+    return { top: 0 };
+  }
 })
 
 // 라우터 이동에 개입하여 인증이 필요한 경우 login 페이지로 전환
