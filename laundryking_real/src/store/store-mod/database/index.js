@@ -20,12 +20,12 @@ export default {
       category: '',             // 구분
       item: '',                 // 품목
       amount: 0,                // 상품 금액
-      boxQuantity: 1,           // 박스 개수 (초기값 수정)
+      boxQuantity: 1,           // 박스 개수
       pickupFee: 0,             // 택배 픽업비
-      finalPaymentAmount: 0,   // 총 결제 금액 (초기값 수정)
+      totalAmount: 0,           // 총 결제 금액
       recipient: '',            // 수령인
       name: '',                 // 이름 추가
-      orderStatus: 'pending'    // 초기 상태 설정
+      orderStatus: 'www'        // 초기 상태 설정
     },
   },
   mutations: {
@@ -73,7 +73,6 @@ export default {
             cleanOrder.recipient = cleanOrder.name;
           }
 
-          // 디버깅용 로그
           console.log('Order data before saving:', cleanOrder);
 
           // Firestore 문서에 저장
