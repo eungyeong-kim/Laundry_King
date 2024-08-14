@@ -29,7 +29,7 @@
               variant="outlined"
               divided
             >
-              <v-btn></v-btn>
+              <v-btn to="/orderhistory">나의 이용내역</v-btn>
             </v-btn-toggle>
           </div>
           <v-divider class="my-10"></v-divider>

@@ -2,6 +2,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import router from "@/router";
 import db from "@/firebase"; // Firestore를 import합니다.
+import store from '@/store';  // Vuex 스토어 import
 
 export default {
   state: {
@@ -59,7 +60,6 @@ export default {
 
     // email 로그인
     fnDoLogin({ commit }, payload) {
-        commit("fnSetLoading", true); // 로딩 상태로 변경
       
         firebase
           .auth()
@@ -80,20 +80,16 @@ export default {
               adress: userData.adress, // 기본주소 정보 추가
               adressDetail: userData.adressDetail, // 상세주소 정보 추가
             });
-            commit("fnSetLoading", false); // 로딩완료
             commit("fnSetErrorMessage", "");
             router.push("/main"); // 로그인 후 main 으로 이동
           })
           .catch((err) => {
-            commit("fnSetErrorMessage", err.message);
-            commit("fnSetLoading", false);
+            commit("fnSetErrorMessage", store.dispatch('modal/openModal', '이메일이나 비밀번호가 일치하지 않습니다.'));
           });
       },
 
     //구글 로그인
     fnDoGoogleLogin_Popup({ commit }) {
-      commit("fnSetLoading", true); // 로딩 상태로 변경
-    
       var oProvider = new firebase.auth.GoogleAuthProvider();
       oProvider.addScope("profile");
       oProvider.addScope("email");
@@ -116,13 +112,11 @@ export default {
     
           // 스토어에 사용자 정보 저장
           commit("fnSetUser", userData);
-          commit("fnSetLoading", false); // 로딩 완료
           commit("fnSetErrorMessage", "");
           router.push("/main");
         })
         .catch((err) => {
-          commit("fnSetErrorMessage", err.message);
-          commit("fnSetLoading", false);
+          commit("fnSetErrorMessage", err);
         });
     },
 

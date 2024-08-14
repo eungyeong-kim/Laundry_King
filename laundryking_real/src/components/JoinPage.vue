@@ -119,24 +119,15 @@
           <!-- 회원가입 버튼 -->
           <v-btn
             type="submit"
-            :disabled="!agreedToTerms || fnGetLoading"
+            :disabled="!agreedToTerms"
             height="49px"
             width="100%"
             color="blue"
             dark
             class="mt-15"
-            v-if="!fnGetLoading"
           >
             회원가입
           </v-btn>
-          <div class="mt-5">
-          <v-progress-circular
-            v-if="fnGetLoading"
-            indeterminate
-            :size="100"
-            color="blue"
-          ></v-progress-circular>
-          </div>
           <v-alert type="error" dismissible v-model="bAlert">
             {{ fnGetErrMsg }}
           </v-alert>

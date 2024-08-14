@@ -32,7 +32,7 @@
 
             <v-row class="d-flex justify-center mt-6">
                 <v-col cols="10">
-                    <img src="/images/images/343x221.png" alt="" width="100%" class="detail-img">
+                    <img src="/images/images/usehow_img1.png" alt="" width="100%" class="detail-img">
                 </v-col>
                 <v-col cols="10" class="explain_text mt-2">
                     <p>&#x203B; 지도에 표시되어 있는 지역에 해당되는 주소만 픽업이 가능합니다.</p>
@@ -59,7 +59,7 @@
 
             <v-row class="d-flex justify-center mt-6">
                 <v-col cols="10">
-                    <img src="/images/images/343x221.png" alt="" width="100%" class="detail-img">
+                    <img src="/images/images/usehow_img2.png" alt="" width="100%" class="detail-img">
                 </v-col>
             </v-row>
 
@@ -71,7 +71,7 @@
 
             <v-row class="d-flex justify-center mt-6">
                 <v-col cols="10">
-                    <img src="/images/images/343x221.png" alt="" width="100%" class="detail-img">
+                    <img src="/images/images/usehow_img3.png" alt="" width="100%" class="detail-img">
                 </v-col>
             </v-row>
 
@@ -83,7 +83,7 @@
 
             <v-row class="d-flex justify-center mt-6">
                 <v-col cols="10">
-                    <img src="/images/images/343x221.png" alt="" width="100%" class="detail-img">
+                    <img src="/images/images/usehow_img4.png" alt="" width="100%" class="detail-img">
                 </v-col>
                 <v-col cols="10" class="explain_text mt-2">
                     <p>&#x203B; 요금표에 각 세탁물의 가격 측정 기준이 기재되어 있습니다.<br>
@@ -135,7 +135,7 @@
 
             <v-row class="d-flex justify-center mt-6">
                 <v-col cols="10">
-                    <img src="/images/images/343x221.png" alt="" width="100%" class="detail-img">
+                    <img src="/images/images/usehow_img6.png" alt="" width="100%" class="detail-img">
                 </v-col>
                 <v-col cols="10" class="explain_text mt-2">
                     <p>&#x203B; 수거 이후 주문을 취소할 경우 왕복 택배비가 부과됩니다.<br>
