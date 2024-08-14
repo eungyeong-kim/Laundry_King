@@ -125,7 +125,7 @@ export default {
   methods: {
     ...mapMutations(['setOrderInfo']),
     goBack() {
-      this.$router.push('/pickupapply');
+      this.$router.push('/main');
     },
     async submit() {
       if (this.$refs.form.validate() && this.valid) {
