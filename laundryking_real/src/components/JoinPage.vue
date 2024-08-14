@@ -63,6 +63,7 @@
             v-model="sPhone"
             required
             placeholder="숫자만 입력하세요."
+            maxlength="11"
           ></v-text-field>
           <v-text-field
             variant="outlined"
@@ -72,6 +73,7 @@
             v-model="sBirth"
             required
             placeholder="ex) 970717"
+            maxlength="6"
           ></v-text-field>
           <v-text-field
             variant="outlined"
@@ -228,7 +230,14 @@ export default {
     },
     termsButtonColor() {
       return this.agreedToTerms ? 'blue-accent-4' : 'grey lighten-1'; // 동의 여부에 따라 색상 변경
-    }
+    },
+    // 전화번호 검증 규칙
+    phoneNumberRule() {
+      return [
+        v => !!v || '전화번호를 입력해 주세요.',
+        v => /^\d{11}$/.test(v) || '전화번호는 11자리 숫자만 입력할 수 있습니다.',
+      ];
+    },
   },
   methods: {
     async fnRegisterUser() {
