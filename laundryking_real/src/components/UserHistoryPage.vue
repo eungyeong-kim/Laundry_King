@@ -25,21 +25,35 @@
           <img src="/images/images/status.png" alt="">
           <div v-for="item in items" :key="item" class="completeText">
           <p>{{ item.status }}</p>
-          <p>{{ item.statusText }}</p>
+          <p v-html="item.statusText"></p>
           </div>
         </div>
-        <h3 class="dateStyle">주문 내용</h3>
-        <p>{{ orderDetail.item }}</p>
-        <hr>
-        <h3 class="dateStyle">수거 & 배송</h3>
-        <p>수거 예정일 {{ orderDetail.pickupDate }}</p>
-        <p>배송 예정일 {{ orderDetail.deliveryDate }}</p>
-        <p>결제 금액: {{ orderDetail.totalAmount }}원</p>
-        <p>주문 아이템: {{ orderDetail.item }}</p>
+          <h3 class="dateStyle d-flex mb-5">주문 내용</h3>
+          <p class="text-left mb-5 statusStyleforData">{{ orderDetail.item }}</p>
+        <hr class="mb-10">
+          <div class="text-start heightStyle">
+            <h3 class="dateStyle mb-5">수거 & 배송</h3>
+            <p class="pickAndDeliver"><span>수거 예정일</span> <span class="statusStyleforData">{{ orderDetail.pickupDate }}</span></p>
+            <p class="pickAndDeliver"><span>배송 예정일</span> <span class="statusStyleforData">{{ orderDetail.deliveryDate }}</span></p>            
+            <p class="pickAndDeliver"><span>주소</span> <span class="statusStyleforData">{{ orderDetail.address }}</span></p>
+            <p class="pickAndDeliver mb-5"><span>상세주소</span><span class="statusStyleforData">{{orderDetail.detailAddress}}</span></p>
+            <hr>
+            <h3 class="dateStyle mb-5 mt-10">세탁 요청사항</h3>
+            <p class="pickAndDeliver mb-5">
+              <span class="statusStyleforData">{{orderDetail.cleaningRequest}}</span></p>
+            <hr>
+            <h3 class="dateStyle mb-5 mt-10">결제 및 비용</h3>
+            <p class="pickAndDeliver"><span>세탁비용</span><span class="statusStyleforData">{{orderDetail.totalAmount}}원</span></p>
+            <p class="pickAndDeliver mb-5"><span>배송비</span><span class="statusStyleforData">{{orderDetail.pickupFee}}원</span></p>
+            <p class="pickAndDeliver statusStyleforData totalStyle mb-10"><span>총 결제 금액</span> <span class="statusStyleforData">{{ orderDetail.finalPaymentAmount }}원</span></p>
+            
+          </div>
         </div>
       </div>
     </v-col>
   </v-row>
+  <v-row><v-btn class="btnStyle" >주문취소</v-btn></v-row>
+  
     </v-main>
 </template>
 
@@ -68,24 +82,24 @@ export default {
               statusText:"고객님의 소중한 주문을 확인하고 있어요."
             },
             {
-              status:"주문완료",
-              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+              status:"주문접수",
+              statusText:`주문접수가 완료되었어요. <br> 곧 택배사가 세탁물을 픽업할 예정이에요!`
             },
             {
-              status:"주문완료",
-              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+              status:"택배픽업",
+              statusText:`택배사가 세탁물을<br>픽업하여 세탁소로 이동하는 중이에요`
             },
             {
-              status:"주문완료",
-              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+              status:"세탁중",
+              statusText:"고객님의 세탁물을 검수 후 세탁을 진행 중이에요!"
             },
             {
-              status:"주문완료",
-              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+              status:"세탁완료",
+              statusText:`세탁이 완료되었어요!<br>곧 고객님의 주소로 세탁물이 도착해요.`
             },
             {
-              status:"주문완료",
-              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+              status:"배송완료",
+              statusText:""
             }
           ]
           }
@@ -166,27 +180,45 @@ template, div, footer{
   font-weight: bold;
   font-size: 28px;
   width: 234px;
+  text-align: start;
 }
 
 .statusTable{
+  display: grid;
+  grid-template-columns: auto;
+  align-items: center;
   width: 400px;
+  height: 780px;
   border: 1px solid #64B5F6;
   padding: 30px;
   border-radius: 20px;
-  display: flex;
-
+  box-sizing: border-box;
+  background-color: #ffff;
+}
+.premeumCare{
+  height: 35px;
 
 }
 .completeText{
-  margin-left: 10px;
+  width: 360px;
+  position:relative;
+  left: 30px;
+  top: -720px;
+  box-sizing: border-box;
+  line-height: 1.41;
 }
 .completeText p:first-child{
   font-weight: bold;
   display:flex;
+  font-size: 19px;
+  margin-bottom: 40px;
+
 }
 .completeText p:last-child{
   color:#64B5F6;
   margin-bottom: 40px;
+  text-align: start;
+  font-size: 14px;
 
 }
 
@@ -196,5 +228,29 @@ template, div, footer{
   align-items: center;
   text-align: center;
 }
+.pickAndDeliver{
+  display: flex;
+  justify-content: space-between;
 
+}
+
+.heightStyle{
+  line-height: 2;
+  font-size: 18px;
+}
+.statusStyleforData{
+  font-weight: bold;
+}
+.totalStyle{
+  font-size: 24px
+}
+.btnStyle{
+  width: 470px;
+  height: 50px;
+  background-color: #64B5F6;
+  color: #ffffff;
+  font-size: 20px;
+  border-radius: 15px;
+  margin: auto;
+}
 </style>
