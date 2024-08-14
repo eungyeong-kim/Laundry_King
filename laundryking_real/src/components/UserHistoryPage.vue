@@ -3,9 +3,9 @@
         <v-row style="padding:0;">
         <v-col><button @click="goBack"><span class="material-symbols-outlined d-flex align-center mt-1">chevron_backward</span></button></v-col>
         </v-row>
-    <v-row>
-      <v-col></v-col>
-    <v-col cols="8" offset="1">
+
+    <v-row justify="center">
+    <v-col cols="6" class="custom-class">
       <!-- 로딩 상태 -->
       <div v-if="loading">
         <p>주문 정보를 불러오는 중입니다...</p>
@@ -21,18 +21,24 @@
       <div v-else-if="orderDetail">
         <h2 class="mb-10 dateStyle">{{ formattedOrderDate }}</h2>
         <div>
-        <div class="statusTable d-flex">
+        <div class="statusTable mb-10">
           <img src="/images/images/status.png" alt="">
-          <p class="ml-5">주문완료</p>
+          <div v-for="item in items" :key="item" class="completeText">
+          <p>{{ item.status }}</p>
+          <p>{{ item.statusText }}</p>
+          </div>
         </div>
-        <p>수거 예정일: {{ orderDetail.pickupDate }}</p>
-        <p>배송 예정일: {{ orderDetail.deliveryDate }}</p>
+        <h3 class="dateStyle">주문 내용</h3>
+        <p>{{ orderDetail.item }}</p>
+        <hr>
+        <h3 class="dateStyle">수거 & 배송</h3>
+        <p>수거 예정일 {{ orderDetail.pickupDate }}</p>
+        <p>배송 예정일 {{ orderDetail.deliveryDate }}</p>
         <p>결제 금액: {{ orderDetail.totalAmount }}원</p>
         <p>주문 아이템: {{ orderDetail.item }}</p>
         </div>
       </div>
     </v-col>
-  <v-col></v-col>
   </v-row>
     </v-main>
 </template>
@@ -51,11 +57,39 @@ export default {
     }
   },
   data() {
+    
     return {
       orderDetail: null,  // 주문 상세 정보 저장
       loading: true,      // 데이터 로딩 상태를 표시하기 위해 사용
-      error: null         // 오류 발생 시 메시지 저장
-    };
+      error: null ,        // 오류 발생 시 메시지 저장
+      items:[
+            {
+              status:"주문완료",
+              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+            },
+            {
+              status:"주문완료",
+              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+            },
+            {
+              status:"주문완료",
+              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+            },
+            {
+              status:"주문완료",
+              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+            },
+            {
+              status:"주문완료",
+              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+            },
+            {
+              status:"주문완료",
+              statusText:"고객님의 소중한 주문을 확인하고 있어요."
+            }
+          ]
+          }
+    
   },
   methods: {
     goBack() {
@@ -133,11 +167,34 @@ template, div, footer{
   font-size: 28px;
   width: 234px;
 }
+
 .statusTable{
   width: 400px;
   border: 1px solid #64B5F6;
   padding: 30px;
   border-radius: 20px;
+  display: flex;
+
+
+}
+.completeText{
+  margin-left: 10px;
+}
+.completeText p:first-child{
+  font-weight: bold;
+  display:flex;
+}
+.completeText p:last-child{
+  color:#64B5F6;
+  margin-bottom: 40px;
+
+}
+
+.custom-class {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 </style>
