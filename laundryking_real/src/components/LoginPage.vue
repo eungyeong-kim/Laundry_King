@@ -16,20 +16,9 @@
 
         <v-row class="d-flex justify-center">
             <v-col cols="10">
-                <v-btn width="100%" height="49px" flat color="blue" type="submit" v-if="!fnGetLoading">로그인</v-btn>
-                <div v-if="fnGetLoading" class="d-flex justify-center">
-                  <v-progress-circular
-                    indeterminate
-                    :size="100"
-                    color="blue"
-                  >
-                  </v-progress-circular>
-                </div>
-                <v-btn @click="doGoogleLogin" width="100%" height="49px" variant="outlined" color="blue" class="mt-2" v-if="!fnGetLoading"><v-icon class="mr-3">mdi-google</v-icon>구글 로그인</v-btn>
-                <v-btn width="100%" height="49px" variant="text" color="blue" class="mt-2" to="/join" v-if="!fnGetLoading">회원가입하기</v-btn>
-                <v-alert class="mt-3" type="error" dismissible v-model="bAlert">
-                    {{ fnGetErrMsg }}
-                </v-alert>
+                <v-btn width="100%" height="49px" flat color="blue" type="submit">로그인</v-btn>
+                <v-btn @click="doGoogleLogin" width="100%" height="49px" variant="outlined" color="blue" class="mt-2"><v-icon class="mr-3">mdi-google</v-icon>구글 로그인</v-btn>
+                <v-btn width="100%" height="49px" variant="text" color="blue" class="mt-2" to="/join">회원가입하기</v-btn>
             </v-col>
         </v-row>
         </form>

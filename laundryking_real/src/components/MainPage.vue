@@ -4,7 +4,7 @@
             <v-carousel-item v-for="(item, i) in items" :key="i" :src="item.src" cover>
                     <div class="d-flex fill-height justify-start align-center topImages">
                         <p class="topImagesTitle ml-10 mt-15">
-                            {{ item.subTitle }}<br>
+                                {{ item.subTitle }}<br>
                             <p class="topImagesSubTitle">
                                 {{ item.title }}
                             </p>
@@ -146,9 +146,6 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
                 ]
             }
         },
-        mounted() {
-            window.scrollTo(0, 0);  // 페이지 최상단으로 스크롤
-        }
     }
 </script>
 
@@ -217,7 +214,7 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
 }
 .f-color-A1A8BD {
     color: #A1A8BD;
-    font-size: 12px;
+    font-size: 13px;
 }
 .cut-line {
     width: 100%;
