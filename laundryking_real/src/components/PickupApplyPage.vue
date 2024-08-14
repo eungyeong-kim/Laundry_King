@@ -69,9 +69,10 @@
                     :class="['custom-input', { 'is-invalid': !phone && !valid }]"
                     placeholder="연락처를 입력해주세요"
                   />
-                  <v-btn @click="requestVerificationCode" :disabled="!phone" class="phone-button">
-                    인증번호 발송
-                  </v-btn>
+                  <v-btn @click="requestVerificationCode" :disabled="phone.length !== 11" class="phone-button">
+  인증번호 발송
+</v-btn>
+
                 </div>
               </div>
               <div class="form-field-wrapper">
@@ -85,8 +86,8 @@
                     placeholder="인증번호를 입력해주세요"
                   />
                   <v-btn @click="verifyCode" :disabled="!verificationCode" class="verification-button">
-                    인증번호 확인
-                  </v-btn>
+  인증번호 확인
+</v-btn>
                 </div>
               </div>
               <v-btn @click="submit" :disabled="!valid" class="submit-button mt-4">
@@ -174,9 +175,9 @@ export default {
       this.verificationCode = this.sentCode; // 인증번호 입력 필드에 자동으로 설정
     },
     verifyCode() {
-      // 인증번호를 검증하지 않고, `valid`를 true로 설정하여 폼 제출을 가능하게 합니다.
+      // 인증번호를 검증하지 않고, valid를 true로 설정하여 폼 제출을 가능하게 합니다.
       store.dispatch('modal/openModal', '인증이 완료되었습니다!');
-      this.valid = true; // 인증번호 검증 없이 `valid`를 true로 설정하여 폼을 제출 가능하게 함
+      this.valid = true; // 인증번호 검증 없이 valid를 true로 설정하여 폼을 제출 가능하게 함
     },
   },
   mounted() {

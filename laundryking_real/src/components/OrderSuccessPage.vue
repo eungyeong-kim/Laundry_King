@@ -95,8 +95,6 @@ export default {
   },
 };
 </script>
-
-
 <style scoped>
 .material-symbols-outlined {
   font-size: 80px;

@@ -16,7 +16,6 @@
         <v-row class="form-row">
           <v-col cols="12" md="6">
             <v-form ref="form" v-model="valid" lazy-validation>
-              <!-- 수거예정일 -->
               <div class="form-field-wrapper">
                 <label for="pickupDate">수거예정일</label>
                 <v-text-field
@@ -26,11 +25,11 @@
                   @change="updatePickupDate"
                   color="blue"
                   variant="underlined"
+                  :min="todayDate"
                 ></v-text-field>
                 <p class="date-display">선택한 날짜: {{ formattedPickupDate }}</p>
               </div>
 
-              <!-- 발송예정일 -->
               <div class="form-field-wrapper">
                 <label for="deliveryDate">발송예정일</label>
                 <input
@@ -43,7 +42,6 @@
                 <p class="date-display">발송예정 날짜: {{ formattedDeliveryDate }}</p>
               </div>
 
-              <!-- 세탁 요청사항 -->
               <div class="form-field-wrapper">
                 <label for="cleaningRequest">세탁 요청사항</label>
                 <v-textarea
@@ -76,9 +74,11 @@
                 </div>
                 <div class="info-box-detail">
                   <hr class="info-box-line" />
-                  <p class="info-box-detail-text">• 고가의 의류나 신발은 단독 세탁과 전용 세제를 사용하는 프리미엄 케어를 권장해드립니다.<br>
+                  <p class="info-box-detail-text">
+                    • 고가의 의류나 신발은 단독 세탁과 전용 세제를 사용하는 프리미엄 케어를 권장해드립니다.<br>
                     • 일부 품목만 프리미엄 케어를 신청하실 경우, 요청사항에 프리미엄 케어를 진행할 품목을 남겨주세요.<br>
-                    • 프리미엄 케어의 경우 일반/멤버십 요금의 2배가 책정돼요.</p>
+                    • 프리미엄 케어의 경우 일반/멤버십 요금의 2배가 책정돼요.
+                  </p>
                 </div>
               </div>
             </div>
@@ -119,13 +119,18 @@ export default {
       deliveryDate: '',
       cleaningRequest: '',
       valid: false,
-      isChecked: false,  // 체크 상태를 저장하는 변수
-      isPickupDateSelected: false, // 수거 예정일 선택 여부
-      daysOfWeek: ["일", "월", "화", "수", "목", "금", "토"],
-      submitting: false, // 제출 중 상태를 추가
+      isChecked: false,
+      submitting: false,
     };
   },
   computed: {
+    todayDate() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
     formattedPickupDate() {
       return this.formatDate(this.pickupDate);
     },
@@ -140,8 +145,8 @@ export default {
     },
     async submit() {
       if (this.$refs.form.validate()) {
-        if (this.submitting) return; // 이미 제출 중인 경우 중복 제출 방지
-        this.submitting = true; // 제출 상태 활성화
+        if (this.submitting) return;
+        this.submitting = true;
 
         this.setOrderInfo({
           pickupDate: this.pickupDate,
@@ -151,27 +156,26 @@ export default {
         });
         try {
           await this.$store.dispatch('submitOrder');
-          this.router.push('/payment'); // /payment 페이지로 이동
+          this.router.push('/payment');
         } catch (error) {
           console.error('Error submitting order:', error);
           alert('주문 정보 제출 중 오류가 발생했습니다.');
         } finally {
-          this.submitting = false; // 제출 완료 상태로 변경
+          this.submitting = false;
         }
       } else {
         console.log('Form validation failed or pickup date is not selected.');
       }
     },
     updatePickupDate() {
-      this.$refs.form.validate(); // 날짜 변경 시 폼 검증
-      this.isPickupDateSelected = !!this.pickupDate; // 수거 예정일이 선택되었는지 확인
+      this.$refs.form.validate();
       if (this.pickupDate) {
         this.deliveryDate = this.calculateDeliveryDate(this.pickupDate);
       }
     },
     calculateDeliveryDate(pickupDate) {
       const date = new Date(pickupDate);
-      date.setDate(date.getDate() + 5); // 수거 예정일로부터 5일 뒤
+      date.setDate(date.getDate() + 5);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
@@ -181,12 +185,12 @@ export default {
       if (!date) return '';
       const [year, month, day] = date.split('-');
       const dateObject = new Date(year, month - 1, day);
-      const dayOfWeek = this.daysOfWeek[dateObject.getDay()];
+      const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+      const dayOfWeek = daysOfWeek[dateObject.getDay()];
       return `${year}-${month}-${day} (${dayOfWeek})`;
     },
     toggleInfoBox() {
-      this.isChecked = !this.isChecked; // 체크 상태를 토글합니다
-      console.log('Info box button clicked. Checked:', this.isChecked);
+      this.isChecked = !this.isChecked;
     }
   },
   setup() {
