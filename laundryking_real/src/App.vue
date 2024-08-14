@@ -6,7 +6,7 @@
     location="right"
     >
       <v-list>
-        <v-list-item :title="user.value?.name || 'User'" class="text-center"></v-list-item>
+        <v-list-item :title="user?.name ? `안녕하세요, ${user.name} 님` : 'MENU'" class="text-center"></v-list-item>
         <v-divider></v-divider>
 
         <v-list-item v-for="(item, i) in fnGetMenuItems" :to="item.to" :key="i">
@@ -159,7 +159,7 @@ const fnGetMenuItems = computed(() => {
         icon: 'home',
       },
       {
-        title: `${user.value.name} 님`,
+        title: `마이페이지`,
         to: '/user',
         icon: 'account_circle',
       },
@@ -197,7 +197,7 @@ const fnDoLogout = () => {
 
 // 사용자 데이터 가져오기
 const user = computed(() => store.getters.fnGetUser || {});
-
+// const userName = computed(() => store.getters.fnGetUser.value.name || {});
 
 const isModalOpen = computed(() => store.getters['modal/isModalOpen']);
 const modalMessage = computed(() => store.getters['modal/modalMessage']);
