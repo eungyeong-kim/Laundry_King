@@ -355,7 +355,7 @@ export default {
       }
     },
     goBack() {
-      this.$router.go(-1);
+      this.$router.push('/orderinfo');
     },
   },
   mounted() {
@@ -491,7 +491,6 @@ export default {
   background: #fff;
   border: 1px solid #ddd; 
   border-radius: 4px; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
   z-index: 1000;
   overflow: hidden; 
 }
@@ -606,7 +605,8 @@ export default {
 }
 
 .quantity-button:hover {
-  background-color: #e0e0e0;
+  background-color: #2196F3;
+  color: #ffffff;
 }
 
 .quantity-button:disabled {
@@ -614,12 +614,13 @@ export default {
   background-color: #d0d0d0;
 }
 
-.quantity-input {
+.quantity-input { /* 이거임 */
   width: 50px; 
   text-align: center;
-  border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 14px; 
+  font-size: 20px; 
+  margin-left: 12px;
+
 }
 
 .delete-button {
@@ -633,6 +634,7 @@ export default {
   font-size: 14px; 
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
+  margin-left: 20px;
 }
 
 .delete-button:hover {

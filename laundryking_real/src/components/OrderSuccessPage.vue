@@ -87,7 +87,7 @@ export default {
   },
   methods: {
     goToOrderHistory() {
-      this.$router.push('/order-history');
+      this.$router.push('/orderhistory');
     },
     goToHome() {
       this.$router.push('/');

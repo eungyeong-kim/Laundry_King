@@ -246,9 +246,13 @@ export default {
     goBack() {
       this.$router.push('/main');
     },
+  },
+  mounted() {
+    window.scrollTo(0, 0);
   }
 }
 </script>
+
 
 <style scoped>
 .material-symbols-outlined {
