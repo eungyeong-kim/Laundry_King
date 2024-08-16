@@ -22,7 +22,7 @@
                     <img src="/images/images/usehow_icon1.png" alt="" class="usehow_icon">
                 </v-col>
             </v-row>
-
+            
             <v-row class="d-flex justify-center">
                 <v-col cols="10" class="usehow_subtitle">
                     <p class="mt-10">먼저 홈에서 ‘픽업 가능 지역’을 눌러<br>
@@ -38,7 +38,7 @@
                     <p>&#x203B; 지도에 표시되어 있는 지역에 해당되는 주소만 픽업이 가능합니다.</p>
                 </v-col>
             </v-row>
-
+        <div class="bg_color"></div>
             <v-row class="d-flex justify-center">
                 <v-col cols="7" class="usehow_title">
                     <p>02</p>
@@ -96,7 +96,7 @@
                     <v-btn height="49px" width="100%" flat color="blue" to="/charge">요금표 확인하기</v-btn>
                 </v-col>
             </v-row>
-
+            <div class="bg_color"></div>
             <v-row class="d-flex justify-center">
                 <v-col cols="7" class="usehow_title">
                     <p>03</p>
@@ -142,7 +142,7 @@
                         세탁중 이후로 확인 되는 주문건은 주문취소가 불가능합니다.</p>
                 </v-col>
             </v-row>
-
+            <div class="bg_color"></div>
             <v-row class="d-flex justify-center">
                 <v-col cols="7" class="usehow_title">
                     <p>04</p>
@@ -197,10 +197,15 @@ template, div, footer{
     padding:0
 }
 
+.bg_color {
+    background: #f6f6f8;
+    height: 10px;
+    margin-top: 100px;
+}
 
 .top_visual {
     width: 100%;
-    height: 300px;
+    height: 250px;
     background: #000;
     overflow: hidden;
     position: relative;
