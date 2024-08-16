@@ -1,9 +1,27 @@
 <template>
     <div>
-        <v-carousel height="239" show-arrows="hover" cycle hide-delimiter-background color="blue">
+        <v-carousel height="239" cycle hide-delimiter-background show-arrows color="blue">
+            <template v-slot:prev="{ props }">
+            <v-btn
+                color="#ffffff"
+                variant="text"
+                @click="props.onClick"
+                icon
+                class="btn-left"
+            ><v-icon>mdi-chevron-left</v-icon></v-btn>
+            </template>
+            <template v-slot:next="{ props }">
+            <v-btn
+                color="#ffffff"
+                variant="text"
+                @click="props.onClick"
+                icon
+                class="btn-right"
+            ><v-icon>mdi-chevron-right</v-icon></v-btn>
+            </template>
             <v-carousel-item v-for="(item, i) in items" :key="i" :src="item.src" cover>
                     <div class="d-flex fill-height justify-start align-center topImages">
-                        <p class="topImagesTitle ml-10 mt-15">
+                        <p class="topImagesTitle ml-15 mt-15">
                                 {{ item.subTitle }}<br>
                             <p class="topImagesSubTitle">
                                 {{ item.title }}
@@ -76,7 +94,25 @@
         <v-row class="d-flex justify-center">
             <v-col cols="10">
                 <v-carousel height="114" show-arrows="hover" cycle hide-delimiter-background color="blue" class="border-radius-15">
-                    <v-carousel-item v-for="(item, i) in events" :key="i" cover >
+                    <template v-slot:prev="{ props }">
+                    <v-btn
+                        color="blue"
+                        variant="text"
+                        @click="props.onClick"
+                        icon
+                        class="btn-left"
+                    ><v-icon>mdi-chevron-left</v-icon></v-btn>
+                    </template>
+                    <template v-slot:next="{ props }">
+                    <v-btn
+                        color="blue"
+                        variant="text"
+                        @click="props.onClick"
+                        icon
+                        class="btn-right"
+                    ><v-icon>mdi-chevron-right</v-icon></v-btn>
+                    </template>
+                    <v-carousel-item v-for="(item, i) in events" :key="i" cover @click=goEvent class="pointer">
                         <v-sheet :color=colors[i] tile height="100%" class="d-flex align-center">
                             <div class="ml-5">
                                 <img :src=item.src alt="" class="eventImg">
@@ -133,11 +169,10 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
                         subTitle:'이젠 합리적으로 득템하세요'
                     },
                     {
-                        src: eventImg2,
-                        title:"그램 단위로 구매하는 빈티지 스토어 '워셔'",
-                        subTitle:'이젠 합리적으로 득템하세요'
+                        src: "/images/images/icon-shoes.png",
+                        title:"소중한 신발을 특별하게비브람 밑창 보강",
+                        subTitle:'비브람 밑창 보강'
                     },
-                    
                 ],
                 colors: [
                     '#E0F8EA',
@@ -146,10 +181,34 @@ import eventImg2 from '@/assets/images/main_event_img2.png'
                 ]
             }
         },
+        methods: {
+            goEvent(){
+                return this.$router.push('/eventdetail')
+            }
+        }
     }
 </script>
 
 <style scoped>
+
+.btn-left {
+    position: relative;
+    left: -30px;
+}
+.btn-right {
+    position: relative;
+    right: -30px;
+}
+.pointer {
+    cursor: pointer;
+}
+
+.v-carousel__controls__item {
+  width: 20px !important;
+  height: 20px !important;
+  background-color: blue !important;
+  border-radius: 50% !important;
+}
 
 .topImages {
     background: rgba(0,0,0,.5);
