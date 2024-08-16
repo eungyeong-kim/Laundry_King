@@ -23,12 +23,15 @@ export default {
       boxQuantity: 1,           // 박스 개수 (초기값 수정)
       pickupFee: 0,             // 택배 픽업비
       finalPaymentAmount: 0,   // 총 결제 금액 (초기값 수정)
+      quantity: 0,
       recipient: '',            // 수령인
       name: '',                 // 이름 추가
-      orderStatus: 'pending'    // 초기 상태 설정
+      orderStatus: 'pending',    // 초기 상태 설정
+      totalAmount: 0
     },
   },
   mutations: {
+    
     fnSetUser(state, payload) {
       state.oUser = payload;
     },
@@ -40,11 +43,12 @@ export default {
     },
     setOrderInfo(state, payload) {
       const updatedOrder = { ...state.order, ...payload };
+      console.log('Payload:', payload); // 추가된 로그
       if (updatedOrder.name) {
         updatedOrder.recipient = updatedOrder.name;
       }
       state.order = updatedOrder;
-      console.log('Order info updated:', state.order);
+      console.log('Updated order in store:', state.order); // 로그 추가
     },
     setOrderStatus(state, status) {
       state.order.orderStatus = status;
@@ -63,37 +67,31 @@ export default {
     },
   },
   actions: {
-    async submitOrder({ commit, state }) {
+    async submitOrder({ commit, state }, orderData) {
       const user = firebase.auth().currentUser;
       if (user) {
         commit('fnSetLoading', true);
         try {
+          console.log('Order data before saving:', orderData); // 로그 추가
+    
           const cleanOrder = { ...state.order };
-          if (cleanOrder.name) {
-            cleanOrder.recipient = cleanOrder.name;
-          }
-
-          console.log('Order data before saving:', cleanOrder);
-
-          // Firestore 문서에 저장
+    
           const userOrdersRef = db.collection('users').doc(user.uid).collection('orders');
           let orderDoc = userOrdersRef.doc('currentOrder');
-
+    
           const docSnapshot = await orderDoc.get();
           if (!docSnapshot.exists) {
-            console.log('Creating new order document');
             await orderDoc.set({
               ...cleanOrder,
               createdAt: new Date(),
             });
           } else {
-            console.log('Order document already exists');
             await orderDoc.update({
               ...cleanOrder,
               updatedAt: new Date(),
             });
           }
-
+    
           console.log('Order information submitted successfully');
         } catch (error) {
           console.error('Error submitting order information:', error);
@@ -105,6 +103,6 @@ export default {
         commit('fnSetErrorMessage', 'User not authenticated');
         throw new Error('User not authenticated');
       }
-    },
-  },
+    }
+  }
 };
