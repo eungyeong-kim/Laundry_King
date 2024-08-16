@@ -29,8 +29,15 @@
           </div>
         </div>
           <h3 class="dateStyle d-flex mb-5">주문 내용</h3>
-          <p class="text-left mb-5 statusStyleforData">{{ orderDetail.item }}</p>
-        <hr class="mb-10">
+
+          <div v-for="(orderList, index) in orderDetail.selectedItems" :key="index" >
+          <p class="mb-5 orderListStyle">
+            <span> 선택{{ index+1 }} </span>
+            <span class="statusStyleforData">{{ orderList.name+" "+orderList.quantity+"개"}}</span>
+          </p>
+          </div>
+
+          <hr class="mb-10">
           <div class="text-start heightStyle">
             <h3 class="dateStyle mb-5">수거 & 배송</h3>
             <p class="pickAndDeliver"><span>수거 예정일</span> <span class="statusStyleforData">{{ orderDetail.pickupDate }}</span></p>
@@ -43,9 +50,9 @@
               <span class="statusStyleforData">{{orderDetail.cleaningRequest}}</span></p>
             <hr>
             <h3 class="dateStyle mb-5 mt-10">결제 및 비용</h3>
-            <p class="pickAndDeliver"><span>세탁비용</span><span class="statusStyleforData">{{orderDetail.totalAmount}}원</span></p>
-            <p class="pickAndDeliver mb-5"><span>배송비</span><span class="statusStyleforData">{{orderDetail.pickupFee}}원</span></p>
-            <p class="pickAndDeliver statusStyleforData totalStyle mb-10"><span>총 결제 금액</span> <span class="statusStyleforData">{{ orderDetail.finalPaymentAmount }}원</span></p>
+            <p class="pickAndDeliver"><span>세탁비용</span><span class="statusStyleforData">{{formatCurrency(orderDetail.totalAmount)}}원</span></p>
+            <p class="pickAndDeliver mb-5"><span>배송비</span><span class="statusStyleforData">{{formatCurrency(orderDetail.pickupFee)}}원</span></p>
+            <p class="pickAndDeliver statusStyleforData totalStyle mb-10"><span>총 결제 금액</span> <span class="statusStyleforData">{{ formatCurrency(orderDetail.finalPaymentAmount) }}원</span></p>
             
           </div>
         </div>
@@ -118,6 +125,12 @@ export default {
       const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
       
       return `${month}월 ${day}일 (${weekday})요일 주문하신 내역입니다.`;
+    },
+    formatCurrency(amount) {
+      if (typeof amount !== "number") {
+        return amount;
+      }
+      return amount.toLocaleString('ko-KR');
     }
   },
   computed: {
@@ -252,5 +265,11 @@ template, div, footer{
   font-size: 20px;
   border-radius: 15px;
   margin: auto;
+}
+.orderListStyle{
+  display:block;
+display: flex;
+justify-content: space-between;
+font-size: 18px;
 }
 </style>

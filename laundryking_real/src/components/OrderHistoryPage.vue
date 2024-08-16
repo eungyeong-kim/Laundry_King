@@ -27,34 +27,42 @@
       <v-tabs-window v-model="tab">
         <v-tabs-window-item
           v-for="(tabList, index) in tabs"
-          :key="index"
-        >
+          :key="index">
           <p class="text-center mb-10 mt-10 notice">{{ tabList.notice }}</p>
           <div
             class="listItem mb-3"
-            v-for="(order, index) in tabList.orderListContent"
+            v-for="order in tabList.orderListContent"
             :key="order.id"
-            @click="goToOrderDetail(order.id)"
-          >
+            @click="goToOrderDetail(order.id)">
+
             <p class="d-flex justify-space-between mr-5 ml-5 orderStatus">
               <span class="mb-1 status_style">{{ order.orderStatus }}</span>
-              <span class="mb-1">{{ order.orderNumber }}</span>
+              <span class="mb-1">{{ "주문번호 " + order.verificationCode }}</span>
             </p>
-            <p class="d-flex justify-space-between mr-5 ml-5">
-              <span class="mt-1">{{ orderListTitle }}</span>
-              <span class="mt-1">{{ order.item }}</span>
-            </p>
+
+            <div class="mr-5 ml-5 d-flex justify-space-between">
+              <p class="mt-1">{{ orderListTitle }}</p>
+              <div v-if="order.selectedItems.length > 0">
+                <p class="mt-1">
+                  {{order.selectedItems[0].name+ " " +order.selectedItems[0].quantity+"개"}}
+                <span v-if="order.selectedItems.length >1">외 {{ order.selectedItems.length-1 }}건</span>
+              </p>
+              </div>
+            </div>
+
             <p class="d-flex justify-space-between mr-5 ml-5">
               <span>{{ preDateTitle }}</span>
               <span>{{ order.pickupDate }}</span>
             </p>
+
             <p class="d-flex justify-space-between mr-5 ml-5 orderStatus">
               <span class="mb-1">{{ deliverTitle }}</span>
               <span>{{ order.deliveryDate }}</span>
             </p>
+
             <p class="d-flex justify-space-between mr-5 ml-5 charge_font">
               <span class="mt-1">{{ chargeTitle }}</span>
-              <span class="mt-1 font-weight-bold">{{ formatCurrency(order.totalAmount) + " " + "원" }}</span>
+              <span class="mt-1 font-weight-bold">{{ formatCurrency(order.finalPaymentAmount) + " 원" }}</span>
             </p>
           </div>
         </v-tabs-window-item>
@@ -67,7 +75,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy,addDoc  } from "firebase/firestore";
 import db from '@/firebase';
 
 export default {
@@ -138,7 +146,8 @@ export default {
       } catch (error) {
         console.error("Error fetching orders: ", error);
       }
-    }
+    },
+    
   },
   mounted() {
     firebase.auth().onAuthStateChanged(async (user) => {
@@ -199,4 +208,5 @@ template, div, footer {
 .charge_font {
   font-size: 20px;
 }
+
 </style>

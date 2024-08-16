@@ -323,6 +323,8 @@ export default {
         selectedItems: this.selectedItems,
         boxQuantity: this.boxQuantity,
         finalPaymentAmount: this.finalPaymentAmount,
+        pickupFee: this.pickupFee,
+        totalAmount: this.totalAmount
       });
 
       const orderData = {
@@ -330,6 +332,8 @@ export default {
         boxQuantity: this.boxQuantity,
         finalPaymentAmount: this.finalPaymentAmount,
         createdAt: new Date(),
+        pickupFee: this.pickupFee,
+        totalAmount: this.totalAmount
       };
 
       try {
